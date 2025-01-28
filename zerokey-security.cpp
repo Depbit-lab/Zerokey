@@ -21,13 +21,7 @@ void ZerokeySecurity::lock() {      //encrypt currently selected account and sto
     data[ i + 16 ] = currentUser[ i ];
     data[ i + 32 ] = currentPass[ i ];
   }
-    for ( int i = 0; i < 16; i++ ) {
-    iv[ i ] = data[ i + 48 ];
-    key[ i ] = pinArray[ i ];
-    data[ i ] = currentSite[ i ];
-    data[ i + 16 ] = currentUser[ i ];
-    data[ i + 32 ] = currentPass[ i ];
-  }
+
 aesLib.encrypt(
   (const byte*) data,  // casteamos a const byte*
   48,
