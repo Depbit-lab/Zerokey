@@ -268,7 +268,9 @@ void ZerokeyIo::centerButtonPressed() {
         if ( cursorIndex < 15 ) cursorIndex = cursorIndex + 1;
         else cursorIndex = 0;
         break;
-    case MENU: break;
+    case MENU: 
+    zerokeySecurity.lock();
+    break;
       default:
         zerokeyUtils.throwErrorScreen();
         break;

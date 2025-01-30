@@ -30,7 +30,7 @@ void setup() {
 
 
   SerialUSB.begin(9600);        // Inicializa la comunicación USB Serial
-  while (!SerialUSB);           // Espera a que la conexión USB esté lista
+  //while (!SerialUSB);           // Espera a que la conexión USB esté lista
 
   SerialUSB.println("Configuracion realizada");
 
