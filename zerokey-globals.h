@@ -7,24 +7,19 @@
 //#include <Bitcoin.h>  // Incluye SHA256, HMAC, etc.
 //#include <base64.h>
 #include <Arduino.h>
-//#include <avr/io.h>
-//#include <avr/pgmspace.h>
-//#include <avr/sleep.h>
-//#include <avr/power.h>
-//#include <avr/wdt.h>
 #include <SPI.h>
 #include <Wire.h>
-//#include <EEPROM.h>
 #include <Keyboard.h>
-//#include "zerokey-font.h"
 #include "zerokey-display.h"
 #include "zerokey-security.h"
 #include "zerokey-eeprom.h"
+#include "zerokey-setup.h"
+#include "zerokey-menu.h"
 #include "zerokey-utils.h"
 #include "zerokey-io.h"
 
 #define DEBOUNCEDELAY     150 //amount of ms to debounce buttons
-#define MAXSITES          64 //maximum number of storable entries ( 64 Bytes are used per entry, allocate based on installed EEPROM )
+#define MAXSITES          4 //maximum number of storable entries ( 64 Bytes are used per entry, allocate based on installed EEPROM )
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
@@ -34,7 +29,7 @@
 
 #define EEPROM_WP_PIN     1
 
-
+//screens
 #define SPLASHSCREEN 1
 #define PIN_SCREEN 2
 #define MAIN_INDEX 3
@@ -49,6 +44,7 @@
 #define EDIT_KB2 12
 #define EDIT_KB3 13
 #define MENU 14
+#define SETUP 15
 #define CATCH_ERROR 0 
 
 #define TS06_ADDRESS 0xD2 >> 1       // Dirección I2C del TS06 (desplazada para Wire)
@@ -56,6 +52,13 @@
 #define DATA_START_ADDRESS 0x00     // Dirección inicial de registros adicionales
 #define DATA_LENGTH 8               // Cantidad de registros a leer (ajustable)
 #define NUM_CHANNELS 5 // O el número que corresponda
+
+//EEPROM
+#define BLOCK_SIZE 48    // Tamaño del bloque que usamos para cada entrada
+#define PAGE_SIZE 8      // Tamaño de página del M24C02
+#define USER_DATA_START 0x0040 // Dirección base para el área de datos de usuario
+
+
 
 
 #define GLOBAL_VARIABLES  extern PROGMEM const uint8_t battery[];   \
@@ -70,7 +73,9 @@
                           extern ZerokeyUtils zerokeyUtils;             \
                           extern ZerokeySecurity zerokeySecurity;       \
                           extern ZerokeyEeprom zerokeyEeprom;           \
+                          extern ZerokeySetup zerokeySetup;           \
                           extern ZerokeyDisplay zerokeyDisplay;         \
+                          extern ZerokeyMenu zerokeyMenu;         \
                           extern Adafruit_SSD1306 display;         \
                           extern ZerokeyIo zerokeyIo;                   \
                           extern char currentSite[ 16 ];            \
@@ -82,6 +87,7 @@
                           extern int8_t typeIndex;                  \
                           extern int8_t cursorIndex;                \            
                           extern int8_t pinArrayIndex;              \ 
+                          extern int8_t eepromAddress;              \ 
                           extern int8_t selectorIndex;              \
                           extern int8_t keyboardIndex;              \
                           extern int16_t siteIndex;                 \
@@ -90,6 +96,7 @@
                           extern int16_t minLevel;                  \
                           extern int16_t maxLevel;                  \
                           extern uint64_t estatus;                  \
+                          extern ZerokeyMenu zerokeyMenu;              \
                           extern uint8_t Data_Buff[ 44 ];         
 
 PROGMEM const uint8_t battery[]  = { 0x37, 0xBD, 0xEE,

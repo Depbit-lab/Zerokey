@@ -7,6 +7,7 @@ class ZerokeyEeprom {
   public:
     void readEntry( byte *entry );
     void writeEntry( byte *entry );
+    void eraseMemory();
   private:
     uint8_t present();
 };

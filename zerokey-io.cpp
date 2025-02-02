@@ -42,8 +42,10 @@ void ZerokeyIo::leftButtonPressed() {
       else if (( selectorIndex == 0 ) && ( keyboardIndex >= 0 )) keyboardIndex = keyboardIndex - 1;
       else selectorIndex = selectorIndex - 1;
       break;
-    case MENU: break;
-     
+    case MENU: 
+    zerokeyMenu.goBack();
+    break;
+    case SETUP: break;
     default: zerokeyUtils.throwErrorScreen(); break;
   }
 }
@@ -61,33 +63,7 @@ void ZerokeyIo::rightButtonPressed() {
         }
       //  break;
     
-    if ( pinIndex > 0 ) {
-    int array1[16] = {1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0};  //Contraseña!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    int error = 0; 
-    for (int i = 0; i<16; i++){
-         if (array1[i] != pinArray[i]){
-             error++;
-         }
-    }
-   if (error == 0){
-    
-        programPosition = MAIN_INDEX;
-        zerokeySecurity.unlock();
-        zerokeyDisplay.wipeScreen();
-        zerokeyDisplay.renderMainScreen();
-        zerokeyDisplay.zerokeydisplay();
-        break; 
-    }else {
-    //    zerokeyDisplay.wipeScreen();
-    //    display.setTextSize( 3 );
-    //    display.print( "ERROR" );
-    //    zerokeyDisplay.zerokeydisplay();
-    //    delay( 2000 );
-    //    programPosition = PIN_SCREEN;
-    //    break; 
-//        return 0;
-    }
-      }
+
       break;  
     case MAIN_INDEX:
     case MAIN_SITE:
@@ -118,6 +94,7 @@ void ZerokeyIo::rightButtonPressed() {
        siteIndex = 0;
       zerokeySecurity.unlock();
     break;
+        case SETUP: break;
     default: zerokeyUtils.throwErrorScreen(); break;
   }
 }
@@ -140,11 +117,12 @@ void ZerokeyIo::upButtonPressed() {
     case EDIT_KB1: break;
     case EDIT_KB2: programPosition = EDIT_KB1; break;
     case EDIT_KB3: programPosition = EDIT_KB2; break;
-    case MENU: 
-        zerokeyUtils.reciveSerial();
-    break; 
+    case MENU:
+zerokeyMenu.navigateUp();
+      break;
+        case SETUP: break;
     default: zerokeyUtils.throwErrorScreen(); break;
-  }
+    }
 }
 void ZerokeyIo::customButtonPressed() {
 }
@@ -166,9 +144,10 @@ void ZerokeyIo::downButtonPressed() {
     case EDIT_KB1: programPosition = EDIT_KB2; break;
     case EDIT_KB2: programPosition = EDIT_KB3; break;
     case EDIT_KB3: break;
-    case MENU: 
-    zerokeyUtils.sendSerial();
-    break;   
+case MENU:
+      zerokeyMenu.navigateDown();
+      break;
+        case SETUP: break;  
     default: zerokeyUtils.throwErrorScreen(); break;
   }
 }
@@ -203,7 +182,35 @@ void ZerokeyIo::centerButtonPressed() {
       case SPLASHSCREEN:
         programPosition = PIN_SCREEN;
         break;
-      case PIN_SCREEN:      break;
+      case PIN_SCREEN:      
+          if ( pinIndex > 0 ) {
+    int array1[16] = {1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0};  //Contraseña!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    int error = 0; 
+    for (int i = 0; i<16; i++){
+         if (array1[i] != pinArray[i]){
+             error++;
+         }
+    }
+   if (error == 0){
+    
+        programPosition = MAIN_INDEX;
+        zerokeySecurity.unlock();
+        zerokeyDisplay.wipeScreen();
+        zerokeyDisplay.renderMainScreen();
+        zerokeyDisplay.zerokeydisplay();
+        break; 
+    }else {
+        zerokeyDisplay.wipeScreen();
+        display.setTextSize( 3 );
+        display.print( "ERROR" );
+        zerokeyDisplay.zerokeydisplay();
+        delay( 2000 );
+        programPosition = PIN_SCREEN;
+        break; 
+        //return 0;
+    }
+      }
+      break;
       case MAIN_INDEX:
         zerokeyUtils.typePassword();
        // zerokeyUtils.clearAccount();
@@ -268,29 +275,36 @@ void ZerokeyIo::centerButtonPressed() {
         if ( cursorIndex < 15 ) cursorIndex = cursorIndex + 1;
         else cursorIndex = 0;
         break;
-    case MENU: 
-    zerokeySecurity.lock();
-    break;
-      default:
-        zerokeyUtils.throwErrorScreen();
-        break;
+      case MENU:
+   zerokeyMenu.selectCurrent();
+
+      break;
+    case SETUP: break;
+      default:        zerokeyUtils.throwErrorScreen(); 
+      break;
     }
   }
 }
 
 
 void ZerokeyIo::handleButtonChecker() {
-    uint8_t status = readRegister(0x25); // Reemplaza 0x00 con STATUS_REGISTER si está definido
+    static uint8_t previousStatus = 0;  // Almacena el estado anterior de los botones
+    uint8_t status = readRegister(0x25); // Leer el estado actual
 
     // Verifica el estado de cada canal táctil
     for (uint8_t channel = 0; channel < NUM_CHANNELS; channel++) {
-        if (status & (1 << channel)) { // Si el bit del canal está activo
+        uint8_t mask = (1 << channel);
+
+        // Detectar transición de 0 → 1 (botón presionado)
+        if ((status & mask) && !(previousStatus & mask)) {
             handleChannelPress(channel); // Ejecuta la función correspondiente
         }
     }
 
-    delay(200); // Ajusta el tiempo de muestreo según sea necesario
+    // Guardar el estado actual para la próxima comparación
+    previousStatus = status;
 }
+
 
 uint8_t ZerokeyIo::readRegister(uint8_t registerAddress) {
     Wire.beginTransmission(TS06_ADDRESS);
@@ -339,4 +353,5 @@ void ZerokeyIo::handleChannelPress(uint8_t channel) {
         default:
             SerialUSB.println("Unknown channel.");
     }
+    zerokeyDisplay.drawScreen();
 }

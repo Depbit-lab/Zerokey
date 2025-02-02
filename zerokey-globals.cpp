@@ -4,6 +4,8 @@ ZerokeyUtils zerokeyUtils;
 ZerokeySecurity zerokeySecurity;
 ZerokeyEeprom zerokeyEeprom;
 ZerokeyDisplay zerokeyDisplay; 
+ZerokeySetup zerokeySetup;
+//ZerokeyMenu zerokeyMenu;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 ZerokeyIo zerokeyIo;
 
@@ -32,4 +34,9 @@ uint16_t  ui16SnapStatus[15], ui16PrevSnap[15];
 uint8_t prevState = 0x00;           // Estado anterior de los canales táctiles
 uint8_t currentState = 0x00;        // Estado actual de los canales táctiles
 uint8_t additionalData[DATA_LENGTH] = {0}; // Buffer para datos adicionales
+
+//EEPROM
+uint8_t eepromAddress = 0x57;
+
+extern ZerokeyMenu zerokeyMenu;
 
