@@ -7,69 +7,27 @@ GLOBAL_VARIABLES
 
 
 
-uint8_t ZerokeyUtils::waitForPress() {              //freeze program until button is pressed
-/*  while ( analogRead( BUTTON_CENTER_PIN ));
-  delay( DEBOUNCEDELAY );
-  if ( !analogRead( BUTTON_CENTER_PIN )) return 1;
-  else return 0;*/
-}
+
 
 void ZerokeyUtils::typePassword() {             //type password when connected to USB port
   Keyboard.begin();
-    delay(1000);
-    switch ( programPosition ) {
-    case PIN_SCREEN:
-         break; 
-    case MAIN_INDEX:
+    delay(10);
         //Keyboard.press(KEY_TAB);
       for ( int i = 0; i < 16; i++ ) {  
         Keyboard.print( currentUser[ i ] );
       }
-      delay(1000);
+      delay(10);
         Keyboard.print( "\t" );
-        delay(1000);
+        delay(10);
       for ( int i = 0; i < 16; i++ ) {
         Keyboard.print( currentPass[ i ] );
       }
        Keyboard.println( "" );
       //Keyboard.press(KEY_INSERT);
-      break;
-    case MAIN_SITE:
-      for ( int i = 0; i < 16; i++ ) {Keyboard.print( currentSite[ i ] );}
-      break;
-    case MAIN_USER:
-      for ( int i = 0; i < 16; i++ ) {Keyboard.print( currentUser[ i ] );}
-      break;
-    case MAIN_PASS:
-      for ( int i = 0; i < 16; i++ ) {Keyboard.print( currentPass[ i ] );}
-      break;
-    case EDIT_LEFT_CURSOR:
-    case EDIT_RIGHT_CURSOR:
-    case EDIT_RAND:
-    case EDIT_BACK:
-    case EDIT_KB1:
-    case EDIT_KB2:
-    case EDIT_KB3:
-      break;
-    default:
-      break;
-  }
-    delay(1000);
+
+
+    delay(10);
     Keyboard.end();
-/* Keyboard.begin();
-  int index = 16;
-  while ( currentPass[ index - 1 ] == ' ') index--;
-  for ( int i = 0; i < index; i++ ) {
-    if ( Keyboard.write( currentPass[ i ] ) == 0 ) {
-      zerokeyDisplay.wipeScreen();
-      display.print("USB Not Connected");
-      zerokeyDisplay.zerokeydisplay();
-      delay(5000);
-      break;
-    }
-  }
-  Keyboard.end();
-*/
 }
 
 void ZerokeyUtils::throwErrorScreen() {         //default exception catcher
@@ -353,4 +311,72 @@ unsigned long ZerokeyUtils::calculateCrc() {  //implementation from https://www.
  //   crc = ~crc;
  // }
  return crc;
+}
+
+
+// Función 1: Cambia el valor del indicador de pantalla a lo contrario.
+void ZerokeyUtils::toggleScreenOrientation() {
+  // Leer el indicador actual
+  Wire.beginTransmission(eepromAddress);
+  Wire.write((uint8_t)0x01);  // Dirección 0x0001.
+  Wire.endTransmission(false);  // Usar repeated start.
+  
+  uint8_t bytesReceived = Wire.requestFrom(eepromAddress, (uint8_t)1);
+  uint8_t currentIndicator = 0;
+  if (bytesReceived == 1) {
+    currentIndicator = Wire.read();
+  } else {
+    SerialUSB.println("Error al leer el indicador de pantalla.");
+    return;
+  }
+  
+  // Calcula el nuevo indicador (inversa lógica)
+  uint8_t newIndicator = (currentIndicator == 0) ? 1 : 0;
+  
+  // Escribir el nuevo valor en la EEPROM
+  Wire.beginTransmission(eepromAddress);
+  Wire.write((uint8_t)0x01);  // Dirección 0x0001.
+  Wire.write(newIndicator);
+  byte error = Wire.endTransmission();
+  
+  if (error == 0) {
+    SerialUSB.print("Indicador de pantalla cambiado de ");
+    SerialUSB.print(currentIndicator);
+    SerialUSB.print(" a ");
+    SerialUSB.println(newIndicator);
+  } else {
+    SerialUSB.println("Error al cambiar el indicador de pantalla.");
+  }
+  delay(30);
+}
+
+
+// Función 2: Se ejecuta al inicio del dispositivo para aplicar la orientación de pantalla y controlar la inversión.
+// Lee el indicador de pantalla en la dirección 0x0001 y, si es 1, rota la pantalla 180° e invierte los controles.
+void ZerokeyUtils::initScreenOrientation() {
+    //delay(30);
+  uint8_t indicator = 0;
+  
+  Wire.beginTransmission(eepromAddress);
+  Wire.write((uint8_t)0x01);  // Dirección 0x0001.
+  Wire.endTransmission(false); // Usar repeated start.
+  
+  uint8_t bytesReceived = Wire.requestFrom(eepromAddress, (uint8_t)1);
+  if (bytesReceived == 1) {
+    indicator = Wire.read();
+  } else {
+    SerialUSB.println("Error al leer el indicador de pantalla durante la inicialización.");
+    return;
+  }
+  
+  if (indicator == 1) {
+    display.setRotation(2);  // Rota la pantalla 180° (en Adafruit_SSD1306, 2 suele ser 180°).
+    invertControls = true;   // Activa la inversión de controles.
+    SerialUSB.println("Pantalla invertida y controles invertidos.");
+  } else {
+    display.setRotation(0);  // Orientación normal.
+    invertControls = false;
+    SerialUSB.println("Pantalla normal y controles normales.");
+  }
+  display.display();  // Actualiza la pantalla.
 }

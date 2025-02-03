@@ -12,6 +12,12 @@ void ZerokeyIo::leftButtonPressed() {
         pinIndex--;
       }
       break;
+    case EDITPIN:
+      if ( pinIndex > 0 ) {
+        pinArray[ pinIndex ] = 0;
+        pinIndex--;
+      }
+      break;
     case MAIN_INDEX:
     case MAIN_SITE:
     case MAIN_USER:
@@ -61,10 +67,14 @@ void ZerokeyIo::rightButtonPressed() {
           pinArray[ pinIndex ] = numpadIndex;
           pinIndex++;
         }
-      //  break;
-    
-
       break;  
+    case EDITPIN:
+
+        if (pinIndex < 16) {
+          pinArray[ pinIndex ] = numpadIndex;
+          pinIndex++;
+        }
+      break; 
     case MAIN_INDEX:
     case MAIN_SITE:
     case MAIN_USER:
@@ -106,6 +116,10 @@ void ZerokeyIo::upButtonPressed() {
       if ( numpadIndex < 9 ) numpadIndex++;
       else numpadIndex = 0;
       break;
+    case EDITPIN:
+      if ( numpadIndex < 9 ) numpadIndex++;
+      else numpadIndex = 0;
+      break;
     case MAIN_INDEX: break;
     case MAIN_SITE: programPosition = MAIN_INDEX; break;
     case MAIN_USER: programPosition = MAIN_SITE; break;
@@ -130,6 +144,10 @@ void ZerokeyIo::downButtonPressed() {
   switch ( programPosition ) {
     case SPLASHSCREEN: break;
     case PIN_SCREEN:
+      if ( numpadIndex > 0 ) numpadIndex--;
+      else numpadIndex = 9;
+      break;
+    case EDITPIN:
       if ( numpadIndex > 0 ) numpadIndex--;
       else numpadIndex = 9;
       break;
@@ -183,33 +201,26 @@ void ZerokeyIo::centerButtonPressed() {
         programPosition = PIN_SCREEN;
         break;
       case PIN_SCREEN:      
-          if ( pinIndex > 0 ) {
-    int array1[16] = {1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0};  //Contraseña!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    int error = 0; 
-    for (int i = 0; i<16; i++){
-         if (array1[i] != pinArray[i]){
-             error++;
-         }
-    }
-   if (error == 0){
-    
-        programPosition = MAIN_INDEX;
-        zerokeySecurity.unlock();
-        zerokeyDisplay.wipeScreen();
-        zerokeyDisplay.renderMainScreen();
-        zerokeyDisplay.zerokeydisplay();
-        break; 
-    }else {
-        zerokeyDisplay.wipeScreen();
-        display.setTextSize( 3 );
-        display.print( "ERROR" );
-        zerokeyDisplay.zerokeydisplay();
-        delay( 2000 );
-        programPosition = PIN_SCREEN;
-        break; 
-        //return 0;
-    }
-      }
+          if (zerokeySecurity.verifySignature()) {
+  // La firma coincide, el PIN es correcto.
+  programPosition = MAIN_INDEX;
+  zerokeySecurity.unlock();
+  zerokeyDisplay.wipeScreen();
+  zerokeyDisplay.renderMainScreen();
+  zerokeyDisplay.zerokeydisplay();
+} else {
+  // La firma no coincide, se muestra un error.
+  zerokeyDisplay.wipeScreen();
+  display.setTextSize(3);
+  display.print("ERROR");
+  zerokeyDisplay.zerokeydisplay();
+  delay(2000);
+  programPosition = PIN_SCREEN;
+}
+      break;
+      case EDITPIN:
+      zerokeySecurity.storeSignature();
+      programPosition = MENU;
       break;
       case MAIN_INDEX:
         zerokeyUtils.typePassword();
@@ -324,34 +335,54 @@ uint8_t ZerokeyIo::readRegister(uint8_t registerAddress) {
 }
 
 void ZerokeyIo::handleChannelPress(uint8_t channel) {
+  // Si se deben invertir los controles, remapea los canales:
+  if (invertControls) {
     switch (channel) {
-        case 0:
-            upButtonPressed();
-            SerialUSB.println("Up button pressed.");
-            break;
-        case 1:
-                  customButtonPressed();
-            SerialUSB.println("Custom button pressed.");
-            break;
-        case 2:
-            rightButtonPressed();
-            SerialUSB.println("Right button pressed.");
-            break;
-        case 3:
-            centerButtonPressed();
-            SerialUSB.println("Center button pressed.");
-            break;
-        case 4:
-            downButtonPressed();
-            SerialUSB.println("Down button pressed.");
-            break;
-        case 5:
-
-            leftButtonPressed();
-            SerialUSB.println("Left button pressed.");
-            break;
-        default:
-            SerialUSB.println("Unknown channel.");
+      case 0:  // Originalmente: Up
+        channel = 4;  // Se convierte en Down
+        break;
+      case 4:  // Originalmente: Down
+        channel = 0;  // Se convierte en Up
+        break;
+      case 2:  // Originalmente: Right
+        channel = 5;  // Se convierte en Left
+        break;
+      case 5:  // Originalmente: Left
+        channel = 2;  // Se convierte en Right
+        break;
+      // Los demás (center y custom) no se modifican.
     }
-    zerokeyDisplay.drawScreen();
+  }
+
+  // Procesa el canal (ya remapeado si es necesario)
+  switch (channel) {
+    case 0:
+      upButtonPressed();
+      SerialUSB.println("Up button pressed.");
+      break;
+    case 1:
+      customButtonPressed();
+      SerialUSB.println("Custom button pressed.");
+      break;
+    case 2:
+      rightButtonPressed();
+      SerialUSB.println("Right button pressed.");
+      break;
+    case 3:
+      centerButtonPressed();
+      SerialUSB.println("Center button pressed.");
+      break;
+    case 4:
+      downButtonPressed();
+      SerialUSB.println("Down button pressed.");
+      break;
+    case 5:
+      leftButtonPressed();
+      SerialUSB.println("Left button pressed.");
+      break;
+    default:
+      SerialUSB.println("Unknown channel.");
+      break;
+  }
+  zerokeyDisplay.drawScreen();
 }

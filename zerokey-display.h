@@ -47,12 +47,13 @@ class ZerokeyDisplay {
   public:
     void zerokeydisplay();
     void renderPinScreen();
-    //void renderMenu();
+    void drawInvertedBitmap(int x, int y, const uint8_t *bitmap, int w, int h);
     void renderMainScreen();
     void renderEditScreen();
     void renderHelloScreen();
     void renderKeyCreationScreen();
     void renderReadyScreen();
+    void renderIndicator(const char* indicator);
     void drawScreen();
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
     //void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size);
@@ -64,6 +65,7 @@ class ZerokeyDisplay {
     uint8_t textsize, rotation;
     boolean wrap;
   private:
+
 };
 
 #endif /* _ZAMEK_DISPLAY_H_ */

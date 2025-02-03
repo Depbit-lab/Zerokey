@@ -29,6 +29,8 @@ uint64_t estatus = 0;
 uint8_t Timer[9];
 uint8_t   Data_Buff[44];
 
+bool invertControls = false;
+
 // TS06
 uint16_t  ui16SnapStatus[15], ui16PrevSnap[15];
 uint8_t prevState = 0x00;           // Estado anterior de los canales táctiles
@@ -39,4 +41,5 @@ uint8_t additionalData[DATA_LENGTH] = {0}; // Buffer para datos adicionales
 uint8_t eepromAddress = 0x57;
 
 extern ZerokeyMenu zerokeyMenu;
+
 

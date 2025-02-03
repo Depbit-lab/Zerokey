@@ -6,7 +6,6 @@
 class ZerokeyUtils {
   public:
     void refreshBatteryLevel();
-    uint8_t waitForPress();
     void sendSerial();
     void reciveSerial();
     void typePassword();
@@ -14,6 +13,8 @@ class ZerokeyUtils {
     void clearAccount();
     void randomEntry();
     void throwErrorScreen();
+    void toggleScreenOrientation();
+    void initScreenOrientation();
 };
 
 #endif /* _ZAMEK_UTILS_H */

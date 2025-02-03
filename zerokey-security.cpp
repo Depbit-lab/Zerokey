@@ -114,3 +114,98 @@ void ZerokeySecurity::unlock() {
     currentPass[i] = data[i + 32];
   }
 }
+
+void ZerokeySecurity::storeSignature() {
+  // Copia el bloque predefinido desde PROGMEM a un buffer en RAM.
+  uint8_t block[16];
+  for (int i = 0; i < 16; i++) {
+    block[i] = pgm_read_byte(&constantEncryptedBlock[i]);
+  }
+  
+  // Configura la clave a partir de pinArray.
+  for (int i = 0; i < 16; i++) {
+    key[i] = pinArray[i];
+  }
+  
+  // Copia el IV genérico al buffer local 'iv'.
+  memcpy(iv, genericIV, 16);
+  
+  // Encripta el bloque de 16 bytes con AES (clave de 128 bits).
+  uint8_t encryptedBlock[16];
+  int encryptedLength = aesLib.encrypt(block, 16, encryptedBlock, key, 128, iv);
+  if (encryptedLength != 16) {
+    SerialUSB.println("Error en el cifrado con bloque predefinido");
+    return;
+  }
+  
+  // Toma los 8 primeros bytes del bloque cifrado (Verification Signature).
+  uint8_t signature[8];
+  memcpy(signature, encryptedBlock, 8);
+  
+  // Escribe esos 8 bytes en la EEPROM (en la región 0x0005 a 0x000C).
+  Wire.beginTransmission(eepromAddress);
+  Wire.write((uint8_t)0x05);  // Dirección de inicio.
+  for (int i = 0; i < 8; i++) {
+    Wire.write(signature[i]);
+  }
+  byte error = Wire.endTransmission();
+  if (error == 0) {
+    SerialUSB.println("Verification Signature almacenada correctamente.");
+  } else {
+    SerialUSB.println("Error al almacenar la Verification Signature.");
+  }
+}
+bool ZerokeySecurity::verifySignature() {
+// Copia el bloque predefinido desde PROGMEM a un buffer en RAM.
+  uint8_t block[16];
+  for (int i = 0; i < 16; i++) {
+    block[i] = pgm_read_byte(&constantEncryptedBlock[i]);
+  }
+  
+  // 2. Configura la clave a partir de pinArray.
+  for (int i = 0; i < 16; i++) {
+    key[i] = pinArray[i];
+  }
+  
+  // 3. Establece el IV utilizando el IV genérico.
+  memcpy(iv, genericIV, 16);
+  
+  // 4. Encripta el bloque de 16 bytes con AES (clave de 128 bits).
+  uint8_t encryptedBlock[16];
+  int encryptedLength = aesLib.encrypt(block, 16, encryptedBlock, key, 128, iv);
+  if (encryptedLength != 16) {
+    SerialUSB.println("Error en el cifrado durante la verificación");
+    return false;
+  }
+  
+  // 5. Extrae los 8 primeros bytes del bloque encriptado como la firma calculada.
+  uint8_t computedSignature[8];
+  memcpy(computedSignature, encryptedBlock, 8);
+  
+  // 6. Lee los 8 bytes almacenados en la EEPROM (dirección 0x0005 - 0x000C).
+  uint8_t storedSignature[8];
+  Wire.beginTransmission(eepromAddress);
+  Wire.write((uint8_t)0x05);      // Dirección de inicio
+  Wire.endTransmission(false);    // Repeated start para la lectura.
+  
+  uint8_t bytesRead = Wire.requestFrom(eepromAddress, (uint8_t)8);
+  if (bytesRead != 8) {
+    SerialUSB.println("Error al leer la Verification Signature almacenada");
+    return false;
+  }
+  
+  for (int i = 0; i < 8; i++) {
+    storedSignature[i] = Wire.read();
+  }
+  
+  // 7. Compara las dos firmas.
+  for (int i = 0; i < 8; i++) {
+    if (computedSignature[i] != storedSignature[i]) {
+      SerialUSB.println("La Verification Signature no coincide");
+      return false;
+    }
+  }
+  
+  SerialUSB.println("La Verification Signature coincide");
+  return true;
+}

@@ -10,6 +10,8 @@ class ZerokeySecurity {
     void lock();
     void unlock();
     void eraseAll();
+    void storeSignature();
+    bool verifySignature();
     //void sanitize(byte* s);
 
   

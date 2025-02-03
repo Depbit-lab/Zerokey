@@ -45,6 +45,7 @@
 #define EDIT_KB3 13
 #define MENU 14
 #define SETUP 15
+#define EDITPIN 16
 #define CATCH_ERROR 0 
 
 #define TS06_ADDRESS 0xD2 >> 1       // Dirección I2C del TS06 (desplazada para Wire)
@@ -64,6 +65,10 @@
 #define GLOBAL_VARIABLES  extern PROGMEM const uint8_t battery[];   \
                           extern PROGMEM const uint8_t lock[];      \
                           extern PROGMEM const uint8_t logo[];      \
+                          extern PROGMEM const uint8_t globeIcon[];      \
+                          extern PROGMEM const uint8_t userIcon[];      \
+                          extern PROGMEM const uint8_t passIcon[];      \
+                          extern PROGMEM const uint8_t constantEncryptedBlock[];      \
                           extern PROGMEM const uint8_t pinFrame[];  \
                           extern PROGMEM const uint8_t arrows[];    \
                           extern PROGMEM const char randomValues[]; \
@@ -97,7 +102,29 @@
                           extern int16_t maxLevel;                  \
                           extern uint64_t estatus;                  \
                           extern ZerokeyMenu zerokeyMenu;              \
-                          extern uint8_t Data_Buff[ 44 ];         
+                          extern bool invertControls;               \
+                          extern uint8_t Data_Buff[ 44 ];    
+
+// Definición en PROGMEM de un bloque constante de 16 bytes, usando los LSB de cada valor de 32 bits.
+// Esto crea una constante "constantEncryptedBlock" que contiene:
+PROGMEM const uint8_t constantEncryptedBlock[16] = {
+  0x00, // de 0x00000000
+  0x64, // de 0x1db71064
+  0xC8, // de 0x3b6e20c8
+  0xAC, // de 0x26d930ac
+  0x90, // de 0x76dc4190
+  0xF4, // de 0x6b6b51f4
+  0x58, // de 0x4db26158
+  0x3C, // de 0x5005713c
+  0x20, // de 0xedb88320
+  0x44, // de 0xf00f9344
+  0xE8, // de 0xd6d6a3e8
+  0x8C, // de 0xcb61b38c
+  0xB0, // de 0x9b64c2b0
+  0xD4, // de 0x86d3d2d4
+  0x78, // de 0xa00ae278
+  0x1C  // de 0xbdbdf21c
+};
 
 PROGMEM const uint8_t battery[]  = { 0x37, 0xBD, 0xEE,
 0x37, 0xBD, 0xEE,
@@ -215,6 +242,16 @@ PROGMEM const char randomValues[ 94 ] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
 PROGMEM const char keyboard1[ 32 ]    = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '(', ')', '[', ']', '{', '}' };
 PROGMEM const char keyboard2[ 32 ]    = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '|', '\\', '/', '?' };
 PROGMEM const char keyboard3[ 32 ]    = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', '!', '@', '#', '$', '%', '^', '&', '*', '_', '+', '`', '~', ';', ':', '"', '\'', ',', '.', ' '};
-
-
+PROGMEM const uint8_t globeIcon[] = {
+	0x07, 0xc0, 0x1a, 0xb0, 0x22, 0x88, 0x44, 0x44, 0x44, 0x44, 0x88, 0x22, 0x88, 0x22, 0x90, 0x12, 
+	0x88, 0x22, 0x88, 0x22, 0x44, 0x44, 0x44, 0x44, 0x22, 0x88, 0x1a, 0xb0, 0x07, 0xc0
+};
+PROGMEM const uint8_t userIcon[] = {
+	0x00, 0x00, 0x07, 0xc0, 0x0f, 0xe0, 0x08, 0x20, 0x08, 0x20, 0x08, 0x20, 0x04, 0x40, 0x03, 0x80, 
+	0x00, 0x00, 0x0f, 0xe0, 0x38, 0x38, 0x60, 0x0c, 0x40, 0x04, 0x40, 0x04, 0x00, 0x00
+};
+PROGMEM const uint8_t passIcon[] = {
+	0x00, 0x00, 0x07, 0xc0, 0x1c, 0x70, 0x30, 0x18, 0x20, 0x08, 0x20, 0x08, 0x20, 0x08, 0x20, 0x08, 
+	0x7f, 0xfc, 0x40, 0x04, 0x41, 0x04, 0x41, 0x04, 0x40, 0x04, 0x7f, 0xfc, 0x00, 0x00
+  };
 #endif /* _ZAMEK_GLOBALS_H */

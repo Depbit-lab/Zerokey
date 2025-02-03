@@ -3,23 +3,26 @@
 GLOBAL_VARIABLES
 uint8_t firstime;
 static uint8_t buffer[ 512 ] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x40, 0x40, 0x20, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80, 0x00, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80, 0xE0, 0xF0, 0x90, 0x80, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0x80, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0x80, 0xF0, 0x10, 0x10, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3C, 0xC3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x18, 0x38, 0x3C, 0x1C, 0x1E, 0x0E, 0x07, 0x07, 0xC3, 0x3F, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0xF8, 0xF8, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x30, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x40, 0x40, 0x40, 0x80, 0xC0, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x80, 0x80, 0x00, 0x00, 0x00, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xC0, 0x20, 0x10, 0x08, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x60, 0x60, 0xE0, 0xF0, 0x70, 0x39, 0x3E, 0x1C, 0x18, 0x10, 0x20, 0x40, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0x80, 0x00, 0x00, 0x00, 0x10, 0x18, 0x1F, 0x1F, 0x18, 0x10, 0x00, 0x00, 0x00, 0x80, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x30, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFE, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x03, 0x00, 0x00, 0x03, 0xFC, 0x03, 0x00, 0x00, 0x03, 0xFC, 0x00, 0x00, 0x00, 0xFE, 0x11, 0x10, 0x10, 0x10, 0x10, 0x0F, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x03, 0x0C, 0x30, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x04, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x02, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x02, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x02, 0x07, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00 };
-/*
-void ZerokeyDisplay::renderMenu() {          //put the PIN Screen in the buffer
-  zerokeyDisplay.wipeScreen();
-  display.setTextSize(1);
-  for (uint8_t i = 0; i < currentMenuCount; i++) {
-    if (i == (uint8_t)currentMenuIndex) {
-      display.setTextColor(BLACK, WHITE);  // Opción seleccionada (invertida)
-    } else {
-      display.setTextColor(WHITE, BLACK);
-    }
-    display.setCursor(0, i * 10);  // Suponiendo 10 píxeles de alto por opción
-    display.println(currentMenu[i].label);
+// Función para dibujar un bitmap invertido sin alterar el resto del display.
+void ZerokeyDisplay::drawInvertedBitmap(int x, int y, const uint8_t *bitmap, int w, int h) {
+  // Calcula la cantidad de bytes del bitmap.
+  // Para un bitmap monocromo, cada fila ocupa ceil(w/8) bytes.
+  int bytesPerRow = (w + 7) / 8;
+  int totalBytes = bytesPerRow * h;
+  
+  // Crea un buffer en RAM para el bitmap invertido.
+  uint8_t inverted[totalBytes];
+  
+  // Lee cada byte del bitmap en PROGMEM, inviértelo y almacénalo en el buffer.
+  for (int i = 0; i < totalBytes; i++) {
+    inverted[i] = ~pgm_read_byte(&bitmap[i]);
   }
+  
+  // Dibuja el bitmap invertido.
+  display.drawBitmap(x, y, inverted, w, h, WHITE);
   display.display();
-
 }
-*/
+
 void ZerokeyDisplay::renderHelloScreen() {
   zerokeyDisplay.wipeScreen();
   display.setTextSize(2);
@@ -59,6 +62,33 @@ void ZerokeyDisplay::renderReadyScreen() {
   delay(3000);
 }
 
+void ZerokeyDisplay::renderIndicator(const char* indicator) {
+  // Dibuja un rectángulo blanco en el borde izquierdo de la pantalla.
+  // Suponemos que la pantalla tiene SCREEN_WIDTH x SCREEN_HEIGHT.
+  display.fillRect(0, 0, 10, SCREEN_HEIGHT, WHITE);
+
+  // Configura el color de texto: negro sobre fondo blanco.
+  display.setTextColor(BLACK, WHITE);
+  display.setTextSize(1); // Tamaño 1 (altura aproximada de 8 píxeles por línea)
+
+  // Calcula la longitud del indicador.
+  int len = strlen(indicator);
+  // Calcula la altura total del bloque de texto.
+  int lineHeight = 8; // Aproximadamente 8 píxeles por línea.
+  int totalHeight = len * lineHeight;
+  // Centra verticalmente el bloque de texto.
+  int startY = (SCREEN_HEIGHT - totalHeight) / 2;
+
+  // Imprime cada carácter en una línea separada.
+  for (int i = 0; i < len; i++) {
+    display.setCursor(3, startY + i * lineHeight);
+    display.print(indicator[i]);
+  }
+  
+  display.display();
+}
+
+
 void ZerokeyDisplay::renderPinScreen() {          //put the PIN Screen in the buffer
   zerokeyDisplay.wipeScreen();
   display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE); // screen frame
@@ -76,86 +106,48 @@ void ZerokeyDisplay::renderPinScreen() {          //put the PIN Screen in the bu
 }
 
 void ZerokeyDisplay::renderMainScreen() {  
-  if (programPosition == MAIN_INDEX) {
-    zerokeyDisplay.wipeScreen();
-    display.drawBitmap(0, 0, arrows, 24, 8, WHITE);
-    display.setTextColor(WHITE, BLACK);
-  } else {
-    zerokeyDisplay.wipeScreen();
-    display.drawBitmap(0, 0, arrows, 24, 8, BLACK);
-    display.setTextColor(WHITE);
-  }
 
-  display.setCursor(6, 0);
-  display.println(siteIndex + 1);
-  display.setTextColor(WHITE);
-  display.setCursor(28, 0);
-
+  zerokeyDisplay.renderIndicator(String(siteIndex + 1).c_str());
+  display.setTextSize( 2 );
   // SerialUSB: Imprimir los datos en ASCII y HEX
   SerialUSB.println("\n===============================");
   SerialUSB.println("📖 Mostrando datos en pantalla:");
   SerialUSB.print(siteIndex + 1);
   // 🔍 Mostrar Site en pantalla y SerialUSB
-  display.setCursor(0, 8);
-  display.setTextColor(WHITE);
-  if (programPosition == MAIN_SITE) { display.setTextColor(BLACK, WHITE); }
-  else { display.setTextColor(WHITE); }
-  display.print("Site");
-  display.setTextColor(WHITE);
-  display.print(":");
-  
-  SerialUSB.print("✅ Site: ");
+
+  if (programPosition == MAIN_SITE) {   zerokeyDisplay.drawInvertedBitmap(12, 0, globeIcon, 15, 15);}
+  else {    display.drawBitmap(12, 0, globeIcon, 15, 15, WHITE);}
+
+ display.setTextColor(WHITE);
+    display.setCursor(28, 0);
+
   for (int i = 0; i < 16; i++) { 
     display.print(currentSite[i]);
-    SerialUSB.print(currentSite[i]);  // ASCII
+
   }
-  SerialUSB.print("   [HEX] ");
-  for (int i = 0; i < 16; i++) {
-    SerialUSB.print(currentSite[i], HEX); 
-    SerialUSB.print(" ");
-  }
-  SerialUSB.println();
+
 
   // 🔍 Mostrar User en pantalla y SerialUSB
-  display.setCursor(0, 16);
-  if (programPosition == MAIN_USER) { display.setTextColor(BLACK, WHITE); }
-  else { display.setTextColor(WHITE); }
-  display.print("User");
-  display.setTextColor(WHITE);
-  display.print(":");
   
-  SerialUSB.print("✅ User: ");
+  if (programPosition == MAIN_USER) {   zerokeyDisplay.drawInvertedBitmap(12, 16, userIcon, 15, 15);}
+  else {     display.drawBitmap(12, 16, userIcon, 15, 15, WHITE);}
+ display.setTextColor(WHITE);
+      display.setCursor(28, 16);
+
   for (int i = 0; i < 16; i++) { 
     display.print(currentUser[i]);
-    SerialUSB.print(currentUser[i]);  // ASCII
-  }
-  SerialUSB.print("   [HEX] ");
-  for (int i = 0; i < 16; i++) {
-    SerialUSB.print(currentUser[i], HEX); 
-    SerialUSB.print(" ");
-  }
-  SerialUSB.println();
 
-  // 🔍 Mostrar Pass en pantalla y SerialUSB
-  display.setCursor(0, 24);
-  if (programPosition == MAIN_PASS) { display.setTextColor(BLACK, WHITE); }
-  else { display.setTextColor(WHITE); }
-  display.print("Pass");
-  display.setTextColor(WHITE);
-  display.print(":");
-  
-  SerialUSB.print("✅ Pass: ");
-  for (int i = 0; i < 16; i++) { 
-    display.print(currentPass[i]);
-    SerialUSB.print(currentPass[i]);  // ASCII
   }
-  SerialUSB.print("   [HEX] ");
-  for (int i = 0; i < 16; i++) {
-    SerialUSB.print(currentPass[i], HEX); 
-    SerialUSB.print(" ");
+  if (programPosition == MAIN_PASS) {   
+      display.fillRect(12, 16, 120, 16, BLACK);
+    zerokeyDisplay.drawInvertedBitmap(12, 16, passIcon, 15, 15);
+    display.setTextColor(WHITE);
+    display.setCursor(28, 16);
+      for (int i = 0; i < 16; i++) { 
+      display.print(currentPass[i]);
+
+      }
   }
-  SerialUSB.println();
-  SerialUSB.println("===============================\n");
 }
 
 
@@ -233,6 +225,9 @@ void ZerokeyDisplay::drawScreen() {               //draw current program state's
     case EDIT_KB3:
       renderEditScreen();
       break;
+    case EDITPIN:
+    renderPinScreen();
+    break;
     case MENU:
     zerokeyMenu.displayMenu();
     break;
@@ -256,50 +251,6 @@ void ZerokeyDisplay::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16
 }
 
 
-/*size_t ZerokeyDisplay::write(uint8_t c) {
-  if (c == '\n') {
-    cursor_y += textsize * 8;
-    cursor_x  = 0;
-  } else if (c == '\r') {
-    // skip em
-  } else {
-    if (wrap && ((cursor_x + textsize * 6) >= _width)) { // Heading off edge?
-      cursor_x  = 0;            // Reset x to zero
-      cursor_y += textsize * 8; // Advance y one line
-    }
-    display.drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
-    cursor_x += textsize * 6;
-  }
-  return 1;
-}
-
-void ZerokeyDisplay::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {
-
-  if ((x >= _width)            || // Clip right
-      (y >= _height)           || // Clip bottom
-      ((x + 6 * size - 1) < 0) || // Clip left
-      ((y + 8 * size - 1) < 0))   // Clip top
-    return;
-
-  //if(!_cp437 && (c >= 176)) c++; // Handle 'classic' charset behavior
-  if (c >= 176) c++; // Handle 'classic' charset behavior
-
-  for (int8_t i = 0; i < 6; i++ ) {
-    uint8_t line;
-    if (i < 5) line = pgm_read_byte(font + (c * 5) + i);
-    else      line = 0x0;
-    for (int8_t j = 0; j < 8; j++, line >>= 1) {
-      if (line & 0x1) {
-        if (size == 1) display.drawPixel(x + i, y + j, color);
-        else          fillRect(x + (i * size), y + (j * size), size, size, color);
-      } else if (bg != color) {
-        if (size == 1) display.drawPixel(x + i, y + j, bg);
-        else          fillRect(x + i * size, y + j * size, size, size, bg);
-      }
-    }
-  }
-}
-*/
 
 void ZerokeyDisplay::wipeScreen() {           //reset the OLED display
  display.clearDisplay();

@@ -5,6 +5,9 @@ GLOBAL_VARIABLES // Declare global variables using a macro or pre-defined constr
 void setup() {
 zerokeySetup.startup();
 zerokeySetup.readConfigurationFlag();
+zerokeyUtils.initScreenOrientation();
+  programPosition = PIN_SCREEN;
+  zerokeyDisplay.drawScreen(); // Actualiza la pantalla con el estado actual.
 }
 
 void loop() {

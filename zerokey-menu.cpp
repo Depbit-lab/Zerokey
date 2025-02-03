@@ -12,10 +12,15 @@ void bitcoinSign()       { SerialUSB.println("Bitcoin - Sign ejecutado"); }
 void bitcoinExport()     { SerialUSB.println("Bitcoin - Export ejecutado"); }
 void bitcoinAddresses()  { SerialUSB.println("Bitcoin - Addresses ejecutado"); }
 void bitcoinNewWallet()  { SerialUSB.println("Bitcoin - New Wallet ejecutado"); }
-void settingsRotate()    { SerialUSB.println("Settings - Rotate Screen ejecutado"); }
-void settingsResetPIN()  { SerialUSB.println("Settings - Reset PIN ejecutado"); }
-void settingsDeleteCred(){ SerialUSB.println("Settings - Delete Credentials ejecutado"); }
-void settingsFactoryReset(){ SerialUSB.println("Settings - Factory Reset ejecutado"); }
+void settingsRotate()    { 
+  zerokeyUtils.toggleScreenOrientation();
+  zerokeyUtils.initScreenOrientation();}
+void settingsResetPIN()  { programPosition = EDITPIN;  }
+void settingsDeleteCred(){  
+  zerokeySecurity.eraseAll(); }
+void settingsFactoryReset(){ 
+  zerokeySecurity.eraseAll();
+  zerokeySetup.resetConfigurationFlag();}
 //--------------------------------------------------
 
 // Definición de los submenús.
@@ -59,13 +64,14 @@ ZerokeyMenu::ZerokeyMenu(MenuItem* items, uint8_t count) {
 
 void ZerokeyMenu::displayMenu() {
   zerokeyDisplay.wipeScreen();   // Limpia el buffer del display.
+    zerokeyDisplay.renderIndicator("MENU");
   display.setTextSize(1);
   for (uint8_t i = 0; i < currentMenuCount; i++) {
     if (i == (uint8_t)currentMenuIndex)
       display.setTextColor(BLACK, WHITE);
     else
       display.setTextColor(WHITE, BLACK);
-    display.setCursor(0, i * 10);  // Asume 10 píxeles por opción.
+    display.setCursor(12, i * 10);  // Asume 10 píxeles por opción.
     display.println(currentMenu[i].label);
   }
   display.display();

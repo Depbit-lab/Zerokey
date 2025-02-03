@@ -67,9 +67,6 @@ void ZerokeySetup::startup() {
     SerialUSB.println("Device already configured.");
   }
 
-  // Establece el estado inicial del programa
-  programPosition = PIN_SCREEN;
-  zerokeyDisplay.drawScreen(); // Actualiza la pantalla con el estado actual.
 }
 
 void ZerokeySetup::runConfigurationRoutine() {
