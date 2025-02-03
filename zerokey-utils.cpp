@@ -9,26 +9,35 @@ GLOBAL_VARIABLES
 
 
 
-void ZerokeyUtils::typePassword() {             //type password when connected to USB port
+void ZerokeyUtils::typePassword() {  // type password when connected to USB port
   Keyboard.begin();
-    delay(10);
-        //Keyboard.press(KEY_TAB);
-      for ( int i = 0; i < 16; i++ ) {  
-        Keyboard.print( currentUser[ i ] );
-      }
-      delay(10);
-        Keyboard.print( "\t" );
-        delay(10);
-      for ( int i = 0; i < 16; i++ ) {
-        Keyboard.print( currentPass[ i ] );
-      }
-       Keyboard.println( "" );
-      //Keyboard.press(KEY_INSERT);
+  delay(10);
 
+  // Escribimos los caracteres de currentUser[]
+  for (int i = 0; i < 16; i++) {
+    Keyboard.print(currentUser[i]);
+    
+    // Verificamos si el último carácter tecleado es "@"
+    if (currentUser[i] == '@') {
+      // Si encontramos "@", escribimos currentSite[] después
+      for (int j = 0; j < 16; j++) {  // O el tamaño adecuado para currentSite[]
+        Keyboard.print(currentSite[j]);
+      }
+    }
+  }
 
-    delay(10);
-    Keyboard.end();
+  // Añadimos el tabulador
+  Keyboard.print("\t");  // Tabulador
+
+  // Escribimos los caracteres de currentPass[]
+  for (int i = 0; i < 16; i++) {
+    Keyboard.print(currentPass[i]);
+  }
+
+  delay(10);
+  Keyboard.end();
 }
+
 
 void ZerokeyUtils::throwErrorScreen() {         //default exception catcher
   display.print("Error: Invalid Program State");

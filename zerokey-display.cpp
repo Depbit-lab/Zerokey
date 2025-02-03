@@ -25,7 +25,7 @@ void ZerokeyDisplay::drawInvertedBitmap(int x, int y, const uint8_t *bitmap, int
 
 void ZerokeyDisplay::renderHelloScreen() {
   zerokeyDisplay.wipeScreen();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
   display.println("Hola!");
@@ -42,7 +42,7 @@ void ZerokeyDisplay::renderHelloScreen() {
 
 void ZerokeyDisplay::renderKeyCreationScreen() {
     zerokeyDisplay.wipeScreen();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
   display.println("Creando clave");
@@ -54,7 +54,7 @@ void ZerokeyDisplay::renderKeyCreationScreen() {
 
 void ZerokeyDisplay::renderReadyScreen() {
     zerokeyDisplay.wipeScreen();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
   display.println("Listo para usar");
@@ -65,10 +65,17 @@ void ZerokeyDisplay::renderReadyScreen() {
 void ZerokeyDisplay::renderIndicator(const char* indicator) {
   // Dibuja un rectángulo blanco en el borde izquierdo de la pantalla.
   // Suponemos que la pantalla tiene SCREEN_WIDTH x SCREEN_HEIGHT.
-  display.fillRect(0, 0, 10, SCREEN_HEIGHT, WHITE);
-
-  // Configura el color de texto: negro sobre fondo blanco.
+if (programPosition == MAIN_INDEX || programPosition == MENU) {
+    // Dibuja un cuadrado vacío de 1 píxel de ancho (solo el borde)
   display.setTextColor(BLACK, WHITE);
+    display.fillRect(0, 0, 10, SCREEN_HEIGHT, WHITE);  // Rectángulo relleno
+} else {
+    // Dibuja el rectángulo relleno cuando programPosition es igual a MAIN_INDEX
+      display.setTextColor(WHITE, BLACK);
+    display.drawRect(0, 0, 10, SCREEN_HEIGHT, WHITE);  // Cuadrado vacío de 1px de grosor
+}
+
+
   display.setTextSize(1); // Tamaño 1 (altura aproximada de 8 píxeles por línea)
 
   // Calcula la longitud del indicador.

@@ -15,6 +15,7 @@ void bitcoinNewWallet()  { SerialUSB.println("Bitcoin - New Wallet ejecutado"); 
 void settingsRotate()    { 
   zerokeyUtils.toggleScreenOrientation();
   zerokeyUtils.initScreenOrientation();}
+  void settingsAbout()    { }
 void settingsResetPIN()  { programPosition = EDITPIN;  }
 void settingsDeleteCred(){  
   zerokeySecurity.eraseAll(); }
@@ -28,7 +29,7 @@ MenuItem backupSubmenu[] = {
   {"Import", backupImport, NULL, 0},
   {"Export", backupExport, NULL, 0}
 };
-
+/*
 MenuItem bitcoinSubmenu[] = {
   {"Import PSBT", bitcoinImportPSBT, NULL, 0},
   {"Sign", bitcoinSign, NULL, 0},
@@ -36,19 +37,23 @@ MenuItem bitcoinSubmenu[] = {
   {"Addresses", bitcoinAddresses, NULL, 0},
   {"New Wallet", bitcoinNewWallet, NULL, 0}
 };
-
-MenuItem settingsSubmenu[] = {
-  {"Rotate Screen", settingsRotate, NULL, 0},
+*/
+MenuItem dangerSubmenu[] = {
   {"Reset PIN", settingsResetPIN, NULL, 0},
   {"Delete Credentials", settingsDeleteCred, NULL, 0},
   {"Factory Reset", settingsFactoryReset, NULL, 0}
+
+};
+MenuItem settingsSubmenu[] = {
+  {"Rotate Screen", settingsRotate, NULL, 0},
+  {"About", settingsAbout, NULL, 0}
 };
 
 // Menú principal.
 MenuItem mainMenu[] = {
   {"Backup", NULL, backupSubmenu, sizeof(backupSubmenu)/sizeof(backupSubmenu[0])},
-  {"Bitcoin", NULL, bitcoinSubmenu, sizeof(bitcoinSubmenu)/sizeof(bitcoinSubmenu[0])},
-  {"Settings", NULL, settingsSubmenu, sizeof(settingsSubmenu)/sizeof(settingsSubmenu[0])}
+  {"Settings", NULL, settingsSubmenu, sizeof(settingsSubmenu)/sizeof(settingsSubmenu[0])},
+  {"Danger Zone", NULL, dangerSubmenu, sizeof(dangerSubmenu)/sizeof(dangerSubmenu[0])}
 };
 
 const uint8_t mainMenuCount = sizeof(mainMenu) / sizeof(mainMenu[0]);

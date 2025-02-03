@@ -25,7 +25,7 @@ void ZerokeySecurity::eraseAll() {
   for (int entryIndex = 0; entryIndex < MAXSITES; entryIndex++) {
     byte eraseBlock[BLOCK_SIZE];
     // Rellena el bloque con 0x20 (espacio)
-    memset(eraseBlock, 0x20, BLOCK_SIZE);
+    memset(eraseBlock, 0xFF, BLOCK_SIZE);
     
     // Establece el índice actual para la zona de usuario.
     // La función writeEntry() debe calcular la dirección base como:
@@ -59,6 +59,33 @@ void ZerokeySecurity::eraseAll() {
 
 
 void ZerokeySecurity::lock() {
+
+for (int i = 15; i >= 0; i--) {
+    // Recorrer currentSite[]
+    if (currentSite[i] == 0x20) {
+      currentSite[i] = 0xFF;  // Reemplazar el espacio por 0xFF
+    } else if (currentSite[i] != 0xFF) {
+      // Si encontramos un valor distinto a 0x20 y 0xFF, terminamos de modificar
+      break;
+    }
+
+    // Recorrer currentUser[]
+    if (currentUser[i] == 0x20) {
+      currentUser[i] = 0xFF;  // Reemplazar el espacio por 0xFF
+    } else if (currentUser[i] != 0xFF) {
+      // Si encontramos un valor distinto a 0x20 y 0xFF, terminamos de modificar
+      break;
+    }
+
+    // Recorrer currentPass[]
+    if (currentPass[i] == 0x20) {
+      currentPass[i] = 0xFF;  // Reemplazar el espacio por 0xFF
+    } else if (currentPass[i] != 0xFF) {
+      // Si encontramos un valor distinto a 0x20 y 0xFF, terminamos de modificar
+      break;
+    }
+  }
+
   // Prepara el bloque de 48 bytes con los datos a encriptar.
   // Se dividen en 3 partes de 16 bytes: site, user y pass.
   for (int i = 0; i < 16; i++) {

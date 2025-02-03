@@ -38,16 +38,6 @@ void ZerokeySetup::startup() {
   // Configuración del display
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Inicializa la pantalla OLED en la dirección I2C 0x3C.
   
-  // Limpia la pantalla y muestra el logo
-  zerokeyDisplay.wipeScreen();                     // Función personalizada para limpiar el buffer.
-  display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE); // Dibuja un recuadro en el borde.
-  //display.drawBitmap(0, 0, logo, 128, 32, WHITE);  // Dibuja un logo (opcional).
-  display.setTextSize(2);
-  display.setCursor(4, 8);
-  display.println("ZeroKeyUSB");
-  zerokeyDisplay.zerokeydisplay();  // Actualiza la pantalla.
-  delay(3000);                      // Espera 3 segundos para mostrar el logo.
-
   SerialUSB.println("Configuracion realizada");
 
   // Ahora leemos el flag de configuración y actuamos en consecuencia.
