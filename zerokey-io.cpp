@@ -51,8 +51,19 @@ void ZerokeyIo::leftButtonPressed() {
     case MENU: 
     zerokeyMenu.goBack();
     break;
-    case SETUP: break;
-    default: zerokeyUtils.throwErrorScreen(); break;
+
+case SETUP: 
+    if (currentsetupPage > 0) {
+        currentsetupPage--;
+        zerokeyDisplay.renderHelloScreen(currentsetupPage);
+    }
+    break;
+
+    default: 
+        SerialUSB.println("default left");
+    zerokeyUtils.throwErrorScreen(); 
+
+    break;
   }
 }
 
@@ -103,9 +114,18 @@ void ZerokeyIo::rightButtonPressed() {
        programPosition = MAIN_INDEX;
        siteIndex = 0;
       zerokeySecurity.unlock();
+      break;
+    case SETUP: 
+      if (currentsetupPage < numsetupPages - 1) {
+      currentsetupPage++;
+      zerokeyDisplay.renderHelloScreen(currentsetupPage);
+      }
+      break;
+    default: 
+            SerialUSB.println("default rigt");
+    zerokeyUtils.throwErrorScreen(); 
+
     break;
-        case SETUP: break;
-    default: zerokeyUtils.throwErrorScreen(); break;
   }
 }
 
@@ -135,7 +155,11 @@ void ZerokeyIo::upButtonPressed() {
 zerokeyMenu.navigateUp();
       break;
         case SETUP: break;
-    default: zerokeyUtils.throwErrorScreen(); break;
+    default: 
+            SerialUSB.println("default up");
+    zerokeyUtils.throwErrorScreen(); 
+
+    break;
     }
 }
 void ZerokeyIo::customButtonPressed() {
@@ -162,11 +186,21 @@ void ZerokeyIo::downButtonPressed() {
     case EDIT_KB1: programPosition = EDIT_KB2; break;
     case EDIT_KB2: programPosition = EDIT_KB3; break;
     case EDIT_KB3: break;
-case MENU:
+    case MENU:
       zerokeyMenu.navigateDown();
       break;
-        case SETUP: break;  
-    default: zerokeyUtils.throwErrorScreen(); break;
+    case SETUP: 
+         if (currentsetupPage < numsetupPages - 1) {
+          currentsetupPage++;
+          zerokeyDisplay.renderHelloScreen(currentsetupPage);
+          //delay(300); // Anti-rebote
+        }
+        break;  
+    default: 
+            SerialUSB.println("Default down");
+    zerokeyUtils.throwErrorScreen(); 
+
+    break;
   }
 }
 
@@ -220,7 +254,7 @@ void ZerokeyIo::centerButtonPressed() {
       break;
       case EDITPIN:
       zerokeySecurity.storeSignature();
-      programPosition = MENU;
+      programPosition = MAIN_INDEX;
       break;
       case MAIN_INDEX:
         zerokeyUtils.typePassword();
@@ -291,7 +325,9 @@ void ZerokeyIo::centerButtonPressed() {
 
       break;
     case SETUP: break;
-      default:        zerokeyUtils.throwErrorScreen(); 
+      default:       
+      SerialUSB.println("default down"); 
+      zerokeyUtils.throwErrorScreen(); 
       break;
     }
   }

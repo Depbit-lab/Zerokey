@@ -23,21 +23,45 @@ void ZerokeyDisplay::drawInvertedBitmap(int x, int y, const uint8_t *bitmap, int
   display.display();
 }
 
-void ZerokeyDisplay::renderHelloScreen() {
-  zerokeyDisplay.wipeScreen();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.println("Hola!");
-  display.setTextSize(1);
-  display.println("");
-  display.println("Boton 1: A");
-  display.println("Boton 2: B");
-  display.println("Boton 3: C");
-  display.println("Boton 4: D");
-  display.println("Boton 5: E");
-  display.display();
-  delay(5000); // Espera 5 segundos para que el usuario lea el mensaje
+void ZerokeyDisplay::renderHelloScreen(int page) {
+zerokeyDisplay.wipeScreen();
+display.setTextSize(1);
+display.setTextColor(WHITE);
+display.setCursor(0, 0);
+      SerialUSB.println("page:");
+      SerialUSB.println(page);
+  switch(page) {
+    case 0:
+display.println("First Startup");
+display.println("ZeroKey USB");
+display.println("---------->");
+display.display();
+  programPosition = SETUP;
+break;
+    case 1:
+// Page 3: Additional info and help
+
+display.println("Check 'About'");
+display.println("for info and support");
+display.println("<------------->");
+      SerialUSB.println("segunda pantalla.");
+        programPosition = SETUP;
+break;       
+    case 2:
+
+display.println("Enter Master PIN");
+display.println("Up/Down: Change Digit");
+display.println("<-------------->");
+      SerialUSB.println("tercera pantalla.");
+        programPosition = SETUP;
+break;   
+default: 
+  programPosition = EDITPIN;
+  zerokeyDisplay.drawScreen(); // Actualiza la pantalla con el estado actual.
+break;  
+  }
+  //display.display();
+    //delay( 2000 );
 }
 
 void ZerokeyDisplay::renderKeyCreationScreen() {
@@ -237,6 +261,9 @@ void ZerokeyDisplay::drawScreen() {               //draw current program state's
     break;
     case MENU:
     zerokeyMenu.displayMenu();
+    break;
+        case SETUP:
+        renderHelloScreen(currentsetupPage);
     break;
     default:
       zerokeyUtils.throwErrorScreen();

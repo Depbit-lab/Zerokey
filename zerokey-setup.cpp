@@ -17,7 +17,34 @@ uint8_t ZerokeySetup::readConfigurationFlag() {
   if (bytesReceived == 1) {
     flag = Wire.read();
   }
-  return flag;
+SerialUSB.print("Configuration Flag = 0x");
+SerialUSB.println(flag, HEX);
+
+if (flag == 0x00) {
+  // El dispositivo no está configurado; se ejecuta la secuencia de setup.
+  programPosition = SETUP;
+  zerokeyDisplay.wipeScreen();
+  display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
+  display.setTextSize(2);
+  display.setCursor(4, 8);
+  display.println("ZeroKeyUSB");
+  zerokeyDisplay.zerokeydisplay();
+  delay(3000);
+  zerokeyDisplay.renderHelloScreen(0);
+  SerialUSB.println("render helloscree");
+  // Otras funciones de setup están comentadas.
+}else {
+  SerialUSB.println("go tu pin screem.");
+  zerokeyDisplay.wipeScreen();
+  display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
+  display.setTextSize(2);
+  display.setCursor(4, 8);
+  display.println("ZeroKeyUSB");
+  zerokeyDisplay.zerokeydisplay();
+  delay(3000);
+  programPosition = PIN_SCREEN;
+  zerokeyDisplay.drawScreen();
+}
 }
 
 void ZerokeySetup::startup() {
@@ -34,32 +61,20 @@ void ZerokeySetup::startup() {
     Wire.write(0x00);                     // Escribe el valor 0 en el registro.
     Wire.endTransmission();               // Termina la transmisión I2C.
   }
-
+  delay(30);
   // Configuración del display
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Inicializa la pantalla OLED en la dirección I2C 0x3C.
-  
+  zerokeyUtils.initScreenOrientation();
   SerialUSB.println("Configuracion realizada");
 
-  // Ahora leemos el flag de configuración y actuamos en consecuencia.
-  uint8_t flag = readConfigurationFlag();
-  SerialUSB.print("Configuration Flag = 0x");
-  SerialUSB.println(flag, HEX);
+readConfigurationFlag();
 
-  if (flag == 0x00) {
-    // El dispositivo no está configurado; se ejecuta la secuencia de setup.
-    zerokeyDisplay.renderHelloScreen();
-    zerokeyDisplay.renderPinScreen();
-    zerokeyDisplay.renderKeyCreationScreen();
-    zerokeyDisplay.renderReadyScreen();
-    runConfigurationRoutine();
-  }
-  else {
-    SerialUSB.println("Device already configured.");
-  }
+
 
 }
 
 void ZerokeySetup::runConfigurationRoutine() {
+    delay(30);
   SerialUSB.println("Running configuration routine...");
   // Aquí se implementa la configuración inicial (mostrar mensajes, configurar parámetros, etc.)
   

@@ -42,4 +42,5 @@ uint8_t eepromAddress = 0x57;
 
 extern ZerokeyMenu zerokeyMenu;
 
-
+int numsetupPages = 4;
+int currentsetupPage = 0;

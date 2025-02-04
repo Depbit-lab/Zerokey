@@ -177,7 +177,8 @@ void ZerokeySecurity::storeSignature() {
   }
   byte error = Wire.endTransmission();
   if (error == 0) {
-    SerialUSB.println("Verification Signature almacenada correctamente.");
+zerokeySetup.runConfigurationRoutine();
+zerokeySecurity.eraseAll();
   } else {
     SerialUSB.println("Error al almacenar la Verification Signature.");
   }

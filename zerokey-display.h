@@ -50,7 +50,7 @@ class ZerokeyDisplay {
     void drawInvertedBitmap(int x, int y, const uint8_t *bitmap, int w, int h);
     void renderMainScreen();
     void renderEditScreen();
-    void renderHelloScreen();
+    void renderHelloScreen(int page);
     void renderKeyCreationScreen();
     void renderReadyScreen();
     void renderIndicator(const char* indicator);

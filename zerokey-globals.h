@@ -103,6 +103,8 @@
                           extern uint64_t estatus;                  \
                           extern ZerokeyMenu zerokeyMenu;              \
                           extern bool invertControls;               \
+                          extern const int numsetupPages;              \
+                          extern int currentsetupPage;                 \
                           extern uint8_t Data_Buff[ 44 ];    
 
 // Definición en PROGMEM de un bloque constante de 16 bytes, usando los LSB de cada valor de 32 bits.

@@ -15,13 +15,50 @@ void bitcoinNewWallet()  { SerialUSB.println("Bitcoin - New Wallet ejecutado"); 
 void settingsRotate()    { 
   zerokeyUtils.toggleScreenOrientation();
   zerokeyUtils.initScreenOrientation();}
-  void settingsAbout()    { }
+  void settingsAbout()    {
+// Page 1: Basic info
+zerokeyDisplay.wipeScreen();
+display.setTextSize(1);
+display.setTextColor(WHITE);
+display.setCursor(0, 0);
+display.println("ZeroKey v1.0");
+display.println("Created by @depbit");
+display.println("X and instagram");
+display.display();  // Update the display (if required by your library)
+//delay(3000);        // Pause for 3 seconds
+
+// Page 2: Repository details
+zerokeyDisplay.wipeScreen();
+display.setCursor(0, 0);
+display.println("Code at:");
+display.println("github.com/Depbit-lab");
+display.println("Join us on GitHub");
+display.display();
+//delay(3000);        // Pause for 3 seconds
+
+// Page 3: Thanks and invitation to collaborate
+zerokeyDisplay.wipeScreen();
+display.setCursor(0, 0);
+display.println("Thanks for using");
+display.println("ZeroKey USB!");
+display.println("www.zerokeyusb.com");
+display.display();
+//delay(3000);        // Pause for 3 seconds
+
+   }
 void settingsResetPIN()  { programPosition = EDITPIN;  }
 void settingsDeleteCred(){  
   zerokeySecurity.eraseAll(); }
 void settingsFactoryReset(){ 
-  zerokeySecurity.eraseAll();
-  zerokeySetup.resetConfigurationFlag();}
+  zerokeySetup.resetConfigurationFlag();
+  zerokeyDisplay.wipeScreen();
+display.setCursor(0, 0);
+display.println("Factory reset done");
+display.println("Please disconnect");
+display.println("and reconnect device");
+display.display();
+delay(3000);
+  }
 //--------------------------------------------------
 
 // Definición de los submenús.

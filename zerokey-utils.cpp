@@ -39,11 +39,14 @@ void ZerokeyUtils::typePassword() {  // type password when connected to USB port
 }
 
 
-void ZerokeyUtils::throwErrorScreen() {         //default exception catcher
+void ZerokeyUtils::throwErrorScreen() {   
+          SerialUSB.println(programPosition);      //default exception catcher
   display.print("Error: Invalid Program State");
+  display.print(programPosition);
   zerokeyDisplay.zerokeydisplay();
   delay( 2000 );
-  programPosition = MAIN_INDEX;
+ programPosition = PIN_SCREEN;
+
 }
 
 void ZerokeyUtils::randomEntry() {              //create a random entry
