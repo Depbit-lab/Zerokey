@@ -22,9 +22,8 @@ void ZerokeyIo::leftButtonPressed() {
     case MAIN_SITE:
     case MAIN_USER:
     case MAIN_PASS:
-      siteIndex = siteIndex - 1;
-        if ( siteIndex < 0 ) {programPosition = MENU;   
-        }
+        if ( siteIndex == 0 ) {programPosition = MENU;   }
+        else {siteIndex = siteIndex - 1;}
       zerokeySecurity.unlock();
       break;
     case EDIT_LEFT_CURSOR: break;

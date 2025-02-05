@@ -42,6 +42,7 @@ if (flag == 0x00) {
   display.println("ZeroKeyUSB");
   zerokeyDisplay.zerokeydisplay();
   delay(3000);
+  zerokeySecurity.waitFromEeprom();
   programPosition = PIN_SCREEN;
   zerokeyDisplay.drawScreen();
 }
@@ -68,7 +69,6 @@ void ZerokeySetup::startup() {
   SerialUSB.println("Configuracion realizada");
 
 readConfigurationFlag();
-
 
 
 }
@@ -107,3 +107,4 @@ void ZerokeySetup::resetConfigurationFlag() {
     SerialUSB.println("Error resetting configuration flag!");
   }
 }
+

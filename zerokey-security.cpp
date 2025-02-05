@@ -19,8 +19,24 @@ byte genericIV[16] = { 0x00, 0x01, 0x02, 0x03,
 
 
 void ZerokeySecurity::eraseAll() {
-  SerialUSB.println("Borrando todas las entradas de usuario en EEPROM (0x20 en cada bloque)...");
-
+  for (int i = 9; i >= 0; i--) {
+    zerokeyDisplay.wipeScreen();
+    display.setTextSize(1);
+    display.setCursor(0, 0);  
+    display.setTextColor(BLACK, WHITE);
+    display.println("Critical process");
+        display.setTextColor(WHITE);
+display.println("All database");
+display.println("will be erased.");
+  display.setTextColor(BLACK, WHITE);
+display.println("Unplug to cancel");
+    display.setTextSize(3);
+    display.setTextColor(WHITE);
+    display.setCursor(110, 0);
+    display.print(i);
+    display.display();
+    delay(1000);
+  }
   // Itera sobre el número de entradas disponibles en la zona de datos de usuario
   for (int entryIndex = 0; entryIndex < MAXSITES; entryIndex++) {
     byte eraseBlock[BLOCK_SIZE];
@@ -43,16 +59,10 @@ void ZerokeySecurity::eraseAll() {
   memcpy(eraseBlock, temp, 48);
     // Escribe el bloque "borrado" en la EEPROM
     zerokeyEeprom.writeEntry(eraseBlock);
-    
-    SerialUSB.print("Entrada ");
-    SerialUSB.print(entryIndex);
-    SerialUSB.println(" borrada.");
-    
     // Pequeño retardo entre escrituras (ajustable)
     delay(10);
   }
 
-  SerialUSB.println("Borrado completo de la zona de datos de usuario.");
   delay(2000);
   programPosition = MAIN_INDEX;
 }
@@ -143,6 +153,39 @@ void ZerokeySecurity::unlock() {
 }
 
 void ZerokeySecurity::storeSignature() {
+
+char buffer[17];
+
+    for (int i = 0; i < 16; i++) {
+      // Convertimos int8_t a char explícitamente
+        buffer[i] = (char)(pinArray[i] + '0');
+    }
+    // Agregamos el terminador de cadena
+    buffer[16] = '\0';
+
+
+
+  for (int i = 9; i >= 0; i--) {
+    zerokeyDisplay.wipeScreen();
+    display.setTextSize(1);
+    display.setCursor(0, 0);  
+    display.setTextColor(BLACK, WHITE);
+    display.println("Critical process");
+        display.setTextColor(WHITE);
+display.println("New PIN: ");
+display.println(buffer);
+  display.setTextColor(BLACK, WHITE);
+display.println("Unplug to cancel");
+    display.setTextSize(3);
+    display.setTextColor(WHITE);
+    display.setCursor(110, 0);
+    display.print(i);
+    display.display();
+    delay(1000);
+  }
+
+
+
   // Copia el bloque predefinido desde PROGMEM a un buffer en RAM.
   uint8_t block[16];
   for (int i = 0; i < 16; i++) {
@@ -178,7 +221,7 @@ void ZerokeySecurity::storeSignature() {
   byte error = Wire.endTransmission();
   if (error == 0) {
 zerokeySetup.runConfigurationRoutine();
-zerokeySecurity.eraseAll();
+//zerokeySecurity.eraseAll();
   } else {
     SerialUSB.println("Error al almacenar la Verification Signature.");
   }
@@ -229,11 +272,123 @@ bool ZerokeySecurity::verifySignature() {
   // 7. Compara las dos firmas.
   for (int i = 0; i < 8; i++) {
     if (computedSignature[i] != storedSignature[i]) {
+      incrementFailedAttemptsCounter();
       SerialUSB.println("La Verification Signature no coincide");
+      zerokeySecurity.waitFromEeprom();
       return false;
     }
   }
   
   SerialUSB.println("La Verification Signature coincide");
+  writeFailedAttemptsCounter(0);
   return true;
+}
+
+
+
+
+// Dirección interna de la EEPROM donde guardamos el contador
+// (Si tu EEPROM requiere 2 bytes de dirección, hay que modificar el envío)
+static const uint8_t FAILED_ATTEMPTS_ADDR = 0x02;
+
+/**
+ * @brief Lee 1 byte de la dirección 0x0002 (Failed Attempts Counter).
+ * @return El valor leído [0..255].
+ */
+uint8_t ZerokeySecurity::readFailedAttemptsCounter()
+{
+    uint8_t value = 0;
+delay(10);
+    Wire.beginTransmission(eepromAddress);
+    Wire.write((uint8_t)FAILED_ATTEMPTS_ADDR);
+    byte error = Wire.endTransmission();
+    if (error != 0) {
+        SerialUSB.print("I2C Error setting address: ");
+        SerialUSB.println(error);
+        return 0; // o algún valor por defecto
+    }
+
+    // Pedimos 1 byte
+    Wire.requestFrom((int)eepromAddress, 1);
+    delay(10);
+    if (Wire.available()) {
+        value = Wire.read();
+    } else {
+        SerialUSB.println("No data returned from EEPROM!");
+    }
+
+    return value;
+}
+
+/**
+ * @brief Escribe un byte en la dirección 0x0002. 
+ * @param value Valor a guardar [0..255].
+ */
+void ZerokeySecurity::writeFailedAttemptsCounter(uint8_t value)
+{
+  delay(10);
+    Wire.beginTransmission(eepromAddress);
+    Wire.write((uint8_t)FAILED_ATTEMPTS_ADDR);
+    Wire.write(value);
+    byte error = Wire.endTransmission();
+delay(10);
+    if (error == 0) {
+        SerialUSB.print("FailedAttemptsCounter stored: ");
+        SerialUSB.println(value);
+    } else {
+        SerialUSB.print("Error writing to EEPROM! Code: ");
+        SerialUSB.println(error);
+    }
+}
+
+/**
+ * @brief Incrementa en 1 el contador de fallos (0..255), lo almacena de nuevo.
+ */
+void ZerokeySecurity::incrementFailedAttemptsCounter()
+{
+    uint8_t currentVal = readFailedAttemptsCounter();
+    // Evita overflow: si ya está en 255, mantén 255, o haz wrap si prefieres
+    if (currentVal < 255) {
+        currentVal++;
+    } else {
+        // currentVal = 0; // wrap-around, o
+        currentVal = 255;  // saturado
+    }
+
+    writeFailedAttemptsCounter(currentVal);
+}
+
+/**
+ * @brief Lee el valor guardado en 0x0002 y hace un delay(...) interpretándolo como segundos.
+ */
+void ZerokeySecurity::waitFromEeprom()
+{
+    uint8_t waitTime = readFailedAttemptsCounter();
+    waitTime = waitTime * 10000;
+      for (int i = waitTime; i >= 1; i--) {
+    zerokeyDisplay.wipeScreen();
+    display.setTextSize(1);
+    display.setCursor(0, 0);  
+    display.setTextColor(BLACK, WHITE);
+    display.println("Wrong PIN");
+        display.setTextColor(WHITE);
+display.println("Wait time: ");
+display.println(waitTime);
+  display.setTextColor(BLACK, WHITE);
+display.println("16s x Error");
+    display.setTextSize(3);
+    display.setTextColor(WHITE);
+    display.setCursor(90, 0);
+    display.print(i);
+    display.display();
+    delay(1000);
+  }
+    SerialUSB.print("Waiting ");
+    SerialUSB.print(waitTime);
+    SerialUSB.println(" second(s)...");
+
+    // Interpreta waitTime como segundos:
+    delay((unsigned long)waitTime);
+
+    SerialUSB.println("Done waiting.");
 }

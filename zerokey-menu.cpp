@@ -51,13 +51,14 @@ void settingsDeleteCred(){
   zerokeySecurity.eraseAll(); }
 void settingsFactoryReset(){ 
   zerokeySetup.resetConfigurationFlag();
+  zerokeySecurity.eraseAll();
   zerokeyDisplay.wipeScreen();
 display.setCursor(0, 0);
 display.println("Factory reset done");
 display.println("Please disconnect");
 display.println("and reconnect device");
 display.display();
-delay(3000);
+delay(10000);
   }
 //--------------------------------------------------
 
