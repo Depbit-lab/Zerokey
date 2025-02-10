@@ -16,25 +16,28 @@ void ZerokeyUtils::typePassword() {  // type password when connected to USB port
   // Escribimos los caracteres de currentUser[]
   for (int i = 0; i < 16; i++) {
     Keyboard.print(currentUser[i]);
+      delay(30);
     
     // Verificamos si el último carácter tecleado es "@"
     if (currentUser[i] == '@') {
       // Si encontramos "@", escribimos currentSite[] después
       for (int j = 0; j < 16; j++) {  // O el tamaño adecuado para currentSite[]
         Keyboard.print(currentSite[j]);
+          delay(30);
       }
     }
   }
 
   // Añadimos el tabulador
   Keyboard.print("\t");  // Tabulador
-
+  delay(30);
   // Escribimos los caracteres de currentPass[]
   for (int i = 0; i < 16; i++) {
     Keyboard.print(currentPass[i]);
+      delay(30);
   }
 
-  delay(10);
+  delay(30);
   Keyboard.end();
 }
 

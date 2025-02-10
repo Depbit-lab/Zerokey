@@ -152,7 +152,7 @@ void ZerokeyDisplay::renderMainScreen() {
  display.setTextColor(WHITE);
     display.setCursor(28, 0);
 
-  for (int i = 0; i < 16; i++) { 
+  for (int i = 0; i < 8; i++) { 
     display.print(currentSite[i]);
 
   }
@@ -165,7 +165,7 @@ void ZerokeyDisplay::renderMainScreen() {
  display.setTextColor(WHITE);
       display.setCursor(28, 16);
 
-  for (int i = 0; i < 16; i++) { 
+  for (int i = 0; i < 8; i++) { 
     display.print(currentUser[i]);
 
   }
@@ -174,7 +174,7 @@ void ZerokeyDisplay::renderMainScreen() {
     zerokeyDisplay.drawInvertedBitmap(12, 16, passIcon, 15, 15);
     display.setTextColor(WHITE);
     display.setCursor(28, 16);
-      for (int i = 0; i < 16; i++) { 
+      for (int i = 0; i < 8; i++) { 
       display.print(currentPass[i]);
 
       }
