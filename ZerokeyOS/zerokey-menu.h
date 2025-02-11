@@ -31,6 +31,7 @@ class ZerokeyMenu {
     MenuItem* currentMenu;      // Menú actual.
     uint8_t currentMenuCount;   // Número de opciones en el menú actual.
     int currentMenuIndex;       // Índice de la opción seleccionada.
+    //void updateSettingsLanguageMenuItem();
 };
 
 // Declaración externa de la instancia global del menú.

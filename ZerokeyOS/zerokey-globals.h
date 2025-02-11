@@ -3,13 +3,30 @@
 #ifndef _ZAMEK_GLOBALS_H
 #define _ZAMEK_GLOBALS_H
 
+
+// Agrega esta definición al inicio:
+enum KeyboardLayoutOption {
+  LAYOUT_EN_US = 0,  // Layout estadounidense (por defecto)
+  LAYOUT_DA_DK,      // Danés
+  LAYOUT_DE_DE,      // Alemán
+  LAYOUT_ES_ES,      // Español
+  LAYOUT_FR_FR,      // Francés
+  LAYOUT_HU_HU,      // Húngaro
+  LAYOUT_IT_IT,      // Italiano
+  LAYOUT_PT_PT,      // Portugués (Portugal)
+  LAYOUT_SV_SE       // Sueco
+};
+
+// Luego declara la variable global:
+extern KeyboardLayoutOption currentKeyboardLayout;
+
+
 #include <Adafruit_SSD1306.h>
 //#include <Bitcoin.h>  // Incluye SHA256, HMAC, etc.
 //#include <base64.h>
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Keyboard.h>
 #include "zerokey-display.h"
 #include "zerokey-security.h"
 #include "zerokey-eeprom.h"
@@ -17,6 +34,17 @@
 #include "zerokey-menu.h"
 #include "zerokey-utils.h"
 #include "zerokey-io.h"
+// Incluir los headers para cada layout
+#include <Keyboard.h>
+#include <KeyboardLayout.h>
+#include <Keyboard_da_DK.h>
+#include <Keyboard_de_DE.h>
+#include <Keyboard_es_ES.h>
+#include <Keyboard_fr_FR.h>
+#include <Keyboard_hu_HU.h>
+#include <Keyboard_it_IT.h>
+#include <Keyboard_pt_PT.h>
+#include <Keyboard_sv_SE.h>
 
 #define DEBOUNCEDELAY     150 //amount of ms to debounce buttons
 #define MAXSITES          4 //maximum number of storable entries ( 64 Bytes are used per entry, allocate based on installed EEPROM )
@@ -58,7 +86,7 @@
 #define BLOCK_SIZE 48    // Tamaño del bloque que usamos para cada entrada
 #define PAGE_SIZE 8      // Tamaño de página del M24C02
 #define USER_DATA_START 0x0040 // Dirección base para el área de datos de usuario
-
+#define EEPROM_LAYOUT_ADDR 0x003E
 
 
 
@@ -105,6 +133,7 @@
                           extern bool invertControls;               \
                           extern const int numsetupPages;              \
                           extern int currentsetupPage;                 \
+                          extern KeyboardLayoutOption currentKeyboardLayout; \
                           extern uint8_t Data_Buff[ 44 ];    
 
 // Definición en PROGMEM de un bloque constante de 16 bytes, usando los LSB de cada valor de 32 bits.

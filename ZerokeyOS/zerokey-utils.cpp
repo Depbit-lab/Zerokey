@@ -10,7 +10,18 @@ GLOBAL_VARIABLES
 
 
 void ZerokeyUtils::typePassword() {  // type password when connected to USB port
-  Keyboard.begin();
+  switch (currentKeyboardLayout) {
+    case LAYOUT_EN_US: Keyboard.begin(KeyboardLayout_en_US); break;
+    case LAYOUT_DA_DK: Keyboard.begin(KeyboardLayout_da_DK); break;
+    case LAYOUT_DE_DE: Keyboard.begin(KeyboardLayout_de_DE); break;
+    case LAYOUT_ES_ES: Keyboard.begin(KeyboardLayout_es_ES); break;
+    case LAYOUT_FR_FR: Keyboard.begin(KeyboardLayout_fr_FR); break;
+    case LAYOUT_HU_HU: Keyboard.begin(KeyboardLayout_hu_HU); break;
+    case LAYOUT_IT_IT: Keyboard.begin(KeyboardLayout_it_IT); break;
+    case LAYOUT_PT_PT: Keyboard.begin(KeyboardLayout_pt_PT); break;
+    case LAYOUT_SV_SE: Keyboard.begin(KeyboardLayout_sv_SE); break;
+    default: Keyboard.begin(KeyboardLayout_en_US); break;
+  }
   delay(10);
 
   // Escribimos los caracteres de currentUser[]

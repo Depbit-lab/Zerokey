@@ -14,7 +14,7 @@ GLOBAL_VARIABLES
   | 0x000D - 0x001C| 16           | Global IV                                           |
   | 0x001D         | 1            | Free Space                                          |
   | 0x001E - 0x003D| 32           | Bitcoin Private Key                                 |
-  | 0x003E         | 1            | Free Space                                          |
+  | 0x003E         | 1            | Keyboard Layout                                          |
   | 0x003F         | 1            | Free Space                                          |
   +----------------+--------------+-----------------------------------------------------+
   | 0x0040 - 0x00FF| 192          | User Data (4 entries x 48 bytes each)               |
@@ -109,4 +109,23 @@ void ZerokeyEeprom::readEntry(byte *entry) {
     }
   }
   //SerialUSB.println("Lectura completada.");
+}
+
+void ZerokeyEeprom::writeKeyboardLayout(KeyboardLayoutOption layout) {
+    Wire.beginTransmission(eepromAddress);
+    Wire.write((uint8_t)EEPROM_LAYOUT_ADDR);
+    Wire.write((uint8_t)layout);
+    Wire.endTransmission();
+}
+
+KeyboardLayoutOption ZerokeyEeprom::readKeyboardLayout() {
+    Wire.beginTransmission(eepromAddress);
+    Wire.write((uint8_t)EEPROM_LAYOUT_ADDR);
+    Wire.endTransmission();
+    
+    Wire.requestFrom(eepromAddress, (uint8_t)1);
+    if (Wire.available()) {
+        return (KeyboardLayoutOption)Wire.read();
+    }
+    return LAYOUT_EN_US; // Valor por defecto
 }

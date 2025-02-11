@@ -44,3 +44,5 @@ extern ZerokeyMenu zerokeyMenu;
 
 int numsetupPages = 4;
 int currentsetupPage = 0;
+
+KeyboardLayoutOption currentKeyboardLayout = LAYOUT_EN_US;

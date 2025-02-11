@@ -11,7 +11,8 @@ uint8_t ZerokeySetup::readConfigurationFlag() {
   // Enviar la dirección 0x0000
   Wire.write((uint8_t)0x00);
   Wire.endTransmission();
-  
+  currentKeyboardLayout = zerokeyEeprom.readKeyboardLayout();
+
   // Solicitar 1 byte
   uint8_t bytesReceived = Wire.requestFrom(eepromAddress, (uint8_t)1);
   if (bytesReceived == 1) {
