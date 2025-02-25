@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZeroKeyUSB Screens in SVG</title>
+  <style>
+    body {
+      background-color: #ccc;
+      color: #000;
+      font-family: monospace;
+      margin: 20px;
+    }
+    .screen-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .screen-svg {
+      background-color: black;
+      width: 128px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .screen-description {
+      margin-left: 20px;
+      max-width: 500px;
+    }
+    .screen-description h2 {
+      margin: 0 0 5px;
+      font-size: 18px;
+    }
+    .screen-description p {
+      margin: 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ZeroKeyUSB Screens in SVG</h1>
+
+  <!-- 1. Welcome Screen – Page 0 -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black" />
+        <text x="4" y="10" fill="white" font-family="monospace" font-size="8">First Startup</text>
+        <text x="4" y="18" fill="white" font-family="monospace" font-size="8">ZeroKey USB</text>
+        <text x="4" y="26" fill="white" font-family="monospace" font-size="8">----------&gt;</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Welcome Screen – Page 0</h2>
+      <p>Displays "First Startup", "ZeroKey USB" and an indicator "----------&gt;" at startup.</p>
+    </div>
+  </div>
+
+  <!-- 2. Welcome Screen – Page 1 -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black" />
+        <text x="4" y="10" fill="white" font-family="monospace" font-size="8">Check 'About'</text>
+        <text x="4" y="18" fill="white" font-family="monospace" font-size="8">for info and support</text>
+        <text x="4" y="26" fill="white" font-family="monospace" font-size="8">&lt;-------------&gt;</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Welcome Screen – Page 1</h2>
+      <p>Invites the user to check "About" for more information and support.</p>
+    </div>
+  </div>
+
+  <!-- 3. Key Creation Screen -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black" />
+        <text x="4" y="18" fill="white" font-family="monospace" font-size="8">Creating key</text>
+        <text x="4" y="26" fill="white" font-family="monospace" font-size="8">for encryption...</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Key Creation Screen</h2>
+      <p>Indicates that the encryption key is being generated.</p>
+    </div>
+  </div>
+
+  <!-- 4. Ready to Use Screen -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black" />
+        <text x="4" y="18" fill="white" font-family="monospace" font-size="8">Ready to use</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Ready to Use Screen</h2>
+      <p>Displays that the device is ready for use.</p>
+    </div>
+  </div>
+
+  <!-- 5. PIN Screen -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black"/>
+        <rect x="0" y="0" width="128" height="32" fill="none" stroke="white" stroke-width="1"/>
+        <!-- PIN digits (example: "1", "2", "3", "4") -->
+        <text x="31" y="22" fill="white" font-family="monospace" font-size="16">1</text>
+        <text x="48" y="22" fill="white" font-family="monospace" font-size="16">2</text>
+        <text x="65" y="22" fill="white" font-family="monospace" font-size="16">3</text>
+        <text x="82" y="22" fill="white" font-family="monospace" font-size="16">4</text>
+        <!-- Right box: white background with a black number -->
+        <rect x="104" y="0" width="24" height="32" fill="white" stroke="white" stroke-width="1"/>
+        <text x="109" y="20" fill="black" font-family="monospace" font-size="16">5</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>PIN Screen</h2>
+      <p>Displays the entered PIN in large digits and a box on the right in white with a black number indicating the next digit to select.</p>
+    </div>
+  </div>
+
+  <!-- 6. Main Screen (Limited to 8 characters per line) -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black"/>
+        <!-- Indicator (left edge) -->
+        <rect x="0" y="0" width="10" height="32" fill="white"/>
+        <text x="3" y="18" fill="black" font-family="monospace" font-size="8">1</text>
+        <!-- Globe icon (placeholder: circle) -->
+        <circle cx="19.5" cy="7.5" r="7.5" fill="none" stroke="white" stroke-width="1"/>
+        <!-- Site text: 8 characters, larger and clipped to 64px -->
+        <text x="28" y="14" fill="white" font-family="monospace" font-size="16"
+              textLength="64" lengthAdjust="spacingAndGlyphs">EXAMPLE1</text>
+        <!-- User icon (placeholder: circle) -->
+        <circle cx="19.5" cy="23.5" r="7.5" fill="none" stroke="white" stroke-width="1"/>
+        <!-- User text: 8 characters, larger and clipped to 64px -->
+        <text x="28" y="30" fill="white" font-family="monospace" font-size="16"
+              textLength="64" lengthAdjust="spacingAndGlyphs">USER1234</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Main Screen</h2>
+      <p>Displays an indicator on the left edge and two lines of text. The first line shows a globe icon next to the site name (8 characters), and the second line shows a user icon next to the username (8 characters). The larger font forces each line to display only 8 characters.</p>
+    </div>
+  </div>
+
+  <!-- 7. Edit Screen -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black"/>
+        <text x="0" y="7" fill="white" font-family="monospace" font-size="8">Site: MySiteDemo12</text>
+        <text x="0" y="14" fill="white" font-family="monospace" font-size="8">&lt;&gt; QWERTYUIOPASDFGH</text>
+        <text x="0" y="21" fill="white" font-family="monospace" font-size="8">Rand 1234567890ABCDEF</text>
+        <text x="0" y="28" fill="white" font-family="monospace" font-size="8">Save GHIJKLMNOPQRSTUV</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Edit Screen</h2>
+      <p>Displays the editable field and simulates keyboards and cursors to modify the values of Site, User, and Pass.</p>
+    </div>
+  </div>
+
+  <!-- 8. Menu Screen -->
+  <div class="screen-container">
+    <div class="screen-svg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32">
+        <rect width="128" height="32" fill="black" />
+        <!-- "MENU" indicator: vertical letters on the left edge -->
+        <rect x="0" y="0" width="10" height="32" fill="white" />
+        <text x="3" y="8" fill="black" font-family="monospace" font-size="8">M</text>
+        <text x="3" y="16" fill="black" font-family="monospace" font-size="8">E</text>
+        <text x="3" y="24" fill="black" font-family="monospace" font-size="8">N</text>
+        <text x="3" y="32" fill="black" font-family="monospace" font-size="8">U</text>
+        <!-- Menu options -->
+        <!-- Option 0: "Backup" selected (inverted: white background, black text) -->
+        <rect x="12" y="0" width="116" height="10" fill="white" />
+        <text x="14" y="8" fill="black" font-family="monospace" font-size="8">Backup</text>
+        <!-- Option 1: "Settings" -->
+        <text x="12" y="18" fill="white" font-family="monospace" font-size="8">Settings</text>
+        <!-- Option 2: "Danger Zone" -->
+        <text x="12" y="28" fill="white" font-family="monospace" font-size="8">Danger Zone</text>
+      </svg>
+    </div>
+    <div class="screen-description">
+      <h2>Menu Screen</h2>
+      <p>Simulates the main menu display: shows the "MENU" indicator on the left edge and three options ("Backup", "Settings", and "Danger Zone"), with "Backup" highlighted.</p>
+    </div>
+  </div>
+
+</body>
+</html>
