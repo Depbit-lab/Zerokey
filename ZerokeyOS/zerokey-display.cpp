@@ -34,7 +34,8 @@ display.setCursor(0, 0);
     case 0:
 display.println("First Startup");
 display.println("ZeroKey USB");
-display.println("---------->");
+display.println("Touch the golden dots");
+display.println("Rigth to continue-->");
 display.display();
   programPosition = SETUP;
 break;
@@ -42,8 +43,9 @@ break;
 // Page 3: Additional info and help
 
 display.println("Check 'About'");
+display.println("And Zerokeyusb.com");
 display.println("for info and support");
-display.println("<------------->");
+display.println("<--Left to go back-->");
       SerialUSB.println("segunda pantalla.");
         programPosition = SETUP;
 break;       
@@ -51,7 +53,8 @@ break;
 
 display.println("Enter Master PIN");
 display.println("Up/Down: Change Digit");
-display.println("<-------------->");
+display.println("Left/Right: Add/Erase");
+display.println("Center to OK-------->");
       SerialUSB.println("tercera pantalla.");
         programPosition = SETUP;
 break;   

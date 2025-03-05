@@ -56,13 +56,28 @@ void ZerokeySetup::startup() {
   programPosition = PIN_SCREEN; // Establece el estado inicial del programa a la "Pin Screen"
 
   // Configura los registros del sensor táctil TS06
-  uint8_t registers[] = {0x05, 0x06}; // Registros a configurar: Ref_Rst y Ch_Hold.
-  for (uint8_t i = 0; i < sizeof(registers); i++) {
-    Wire.beginTransmission(TS06_ADDRESS); // Comienza la comunicación con el dispositivo TS06.
-    Wire.write(registers[i]);             // Especifica la dirección del registro.
-    Wire.write(0x00);                     // Escribe el valor 0 en el registro.
-    Wire.endTransmission();               // Termina la transmisión I2C.
-  }
+// Configuración de Ref_Rst (0x05) y Ch_Hold (0x06)
+uint8_t registers[] = {0x05, 0x06}; // Registros a configurar: Ref_Rst y Ch_Hold.
+for (uint8_t i = 0; i < sizeof(registers); i++) {
+  Wire.beginTransmission(TS06_ADDRESS); // Inicia la comunicación I2C con el TS06.
+  Wire.write(registers[i]);             // Especifica la dirección del registro.
+  Wire.write(0x00);                     // Escribe el valor 0 en el registro.
+  Wire.endTransmission();               // Finaliza la transmisión.
+}
+
+// Configuración de la sensibilidad al mínimo para los 6 canales
+// Se usan los registros de sensibilidad:
+// Sensitivity1 (0x00): canales 1 y 2
+// Sensitivity2 (0x01): canales 3 y 4
+// Sensitivity3 (0x02): canales 5 y 6
+uint8_t sensRegisters[] = {0x00, 0x01, 0x02}; // Direcciones de los registros de sensibilidad.
+for (uint8_t i = 0; i < sizeof(sensRegisters); i++) {
+  Wire.beginTransmission(TS06_ADDRESS); // Inicia la comunicación I2C.
+  Wire.write(sensRegisters[i]);         // Dirección del registro de sensibilidad.
+  Wire.write(0x00);                     // Valor 0x00 para establecer la mínima sensibilidad.
+  Wire.endTransmission();               // Finaliza la transmisión.
+}
+
   delay(30);
   // Configuración del display
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Inicializa la pantalla OLED en la dirección I2C 0x3C.
