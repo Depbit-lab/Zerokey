@@ -6,7 +6,10 @@ ZeroKeyUSB is more than just an offline password manager — it’s a portable, 
 
 With a crisp 128x32 OLED display and an intuitive capacitive touch interface, managing passwords is fast and frustration-free—even on the go. ZeroKeyUSB is powered via USB Type-C, requiring no batteries or charging, and is fully compatible with computers, smartphones, and any device that supports USB HID. Built to be water- and dust-resistant, it’s a durable, ultra-portable solution for anyone who values both security and convenience.
 
-[![Watch the video](https://github.com/Depbit-lab/Zerokey/blob/main/Pictures/instagram%20video.png)](https://www.instagram.com/p/DFtAv4eNb4j/)
+<a href="https://www.instagram.com/p/DFtAv4eNb4j/">
+  <img src="https://github.com/Depbit-lab/Zerokey/blob/main/Pictures/instagram%20video.png" alt="Watch the video" width="200">
+</a>
+
 
 
 
