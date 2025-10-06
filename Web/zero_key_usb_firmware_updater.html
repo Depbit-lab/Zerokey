@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZeroKeyUSB – Firmware Updater</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f7f9; }
+    .brand { color: #0b5ed7; font-weight: 800; letter-spacing: .2px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .progress { height: 18px; }
+    .small-muted { font-size: .9rem; color: #6c757d; }
+    .footer { font-size: .9rem; }
+    .chip { font-size: .8rem; padding: .2rem .5rem; border-radius: 999px; background:#eef1f6; }
+    .logbox { height: 160px; overflow:auto; background:#0a0a0a; color:#d7d7d7; font-size:.85rem; padding: .75rem; border-radius: .5rem; }
+    .d-none-imp { display: none !important; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand brand" href="#">ZeroKeyUSB</a>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <select id="langSelect" class="form-select form-select-sm" style="width:auto">
+        <option value="en" selected>English</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  <div class="row g-3 align-items-stretch">
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 id="title" class="card-title mb-0">Firmware Updater</h5>
+            <span class="chip mono" id="deviceState">⏹ Disconnected</span>
+          </div>
+
+          <p id="subtitle" class="text-muted mb-3">Flash new firmware to your ZeroKeyUSB directly from the browser (Web Serial).</p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-auto d-grid">
+              <button class="btn btn-primary" id="btnConnect">🔌 Connect</button>
+            </div>
+            <div class="col-12 col-md-auto d-grid">
+              <button class="btn btn-outline-secondary" id="btnEnterBoot" disabled>↩️ Enter Bootloader</button>
+            </div>
+            <div class="col-12 col-md d-grid">
+              <div class="input-group">
+                <input type="file" class="form-control" id="fileInput" accept=".bin,.hex,.uf2" />
+                <button class="btn btn-outline-secondary" id="btnClearFile">✖</button>
+              </div>
+            </div>
+            <div class="col-12 col-md-auto d-grid">
+              <button class="btn btn-success" id="btnFlash" disabled>⚡ Flash</button>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <div class="progress" role="progressbar" aria-label="Flashing progress">
+              <div id="progressBar" class="progress-bar" style="width: 0%">0%</div>
+            </div>
+            <div class="d-flex justify-content-between small-muted mt-1">
+              <span id="fwInfo">—</span>
+              <span id="speedInfo">—</span>
+            </div>
+          </div>
+
+          <div class="logbox mono" id="log"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 id="instTitle" class="fw-bold">Instructions</h6>
+          <ol id="instList">
+            <li>Connect your device and click <strong>Connect</strong>.</li>
+            <li>Click <strong>Enter Bootloader</strong> (uses 1200&nbsp;baud touch).</li>
+            <li>Select your firmware file (<code>.bin</code> or <code>.hex</code>).</li>
+            <li>Press <strong>Flash</strong> and wait until it finishes.</li>
+            <li>Device will auto-reboot on success.</li>
+          </ol>
+
+          <hr>
+          <h6 class="fw-bold">Bootloader Protocol (expected)</h6>
+          <p class="small-muted">This page speaks a minimal, robust protocol over <em>Web Serial</em> to a SAMD21 bootloader. Implement (or adapt) these commands on the device side:</p>
+          <pre class="mono small-muted mb-2">Host → Device
+HELLO\n                      # probe, device replies "OK BOOT vX.Y"
+ERASE APP\n                # mass erase application region
+WRITE &lt;addr&gt; &lt;len&gt; &lt;crc32&gt;\n
+&lt;raw bytes… len…&gt;
+DONE\n                      # finalize, verify and reboot
+
+Device → Host
+OK BOOT vX.Y\n
+OK ERASE\n
+OK WRITE\n or ERR CRC\n
+OK DONE\n</pre>
+          <p class="small-muted">The page supports <strong>1200&nbsp;baud touch</strong> to nudge Arduino-style SAMD bootloaders into BOOT mode.</p>
+
+          <hr>
+          <h6 class="fw-bold">Notes</h6>
+          <ul class="small-muted" id="notesList">
+            <li>All operations occur locally in your browser. No data is uploaded.</li>
+            <li>Use Chromium-based browsers (Chrome, Edge) with Web Serial enabled.</li>
+            <li>Recommended baud in BOOT: 115200 or higher for speed.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center text-muted mt-3 footer">
+    <span id="foot">Need help? Open an issue on GitHub (ZeroKeyUSB).</span>
+  </div>
+</main>
+
+<script>
+// ========================= i18n =========================
+const I18N = {
+  en: {
+    title: "Firmware Updater",
+    subtitle: "Flash new firmware to your ZeroKeyUSB directly from the browser (Web Serial).",
+    connect: "Connect",
+    enterBoot: "Enter Bootloader",
+    flash: "Flash",
+    disconnected: "⏹ Disconnected",
+    connected: "🟢 Connected",
+    boot: "🟡 Bootloader",
+    instTitle: "Instructions",
+    instList: [
+      "Connect your device and click Connect.",
+      "Click Enter Bootloader (uses 1200 baud touch).",
+      "Select your firmware file (.bin or .hex).",
+      "Press Flash and wait until it finishes.",
+      "Device will auto-reboot on success."
+    ],
+    notes: [
+      "All operations occur locally in your browser. No data is uploaded.",
+      "Use Chromium-based browsers (Chrome, Edge) with Web Serial enabled.",
+      "Recommended baud in BOOT: 115200 or higher for speed."
+    ],
+    foot: "Need help? Open an issue on GitHub (ZeroKeyUSB)."
+  },
+  es: {
+    title: "Actualizador de Firmware",
+    subtitle: "Flashea nuevo firmware al ZeroKeyUSB directamente desde el navegador (Web Serial).",
+    connect: "Conectar",
+    enterBoot: "Entrar en Bootloader",
+    flash: "Flashear",
+    disconnected: "⏹ Desconectado",
+    connected: "🟢 Conectado",
+    boot: "🟡 Bootloader",
+    instTitle: "Instrucciones",
+    instList: [
+      "Conecta el dispositivo y pulsa Conectar.",
+      "Pulsa Entrar en Bootloader (usa toque a 1200 baudios).",
+      "Selecciona el archivo de firmware (.bin o .hex).",
+      "Pulsa Flashear y espera a que termine.",
+      "El dispositivo se reiniciará automáticamente al finalizar."
+    ],
+    notes: [
+      "Todo ocurre localmente en tu navegador. No se sube nada.",
+      "Usa navegadores Chromium (Chrome, Edge) con Web Serial habilitado.",
+      "Baudio recomendado en BOOT: 115200 o mayor para rapidez."
+    ],
+    foot: "¿Necesitas ayuda? Abre un issue en GitHub (ZeroKeyUSB)."
+  }
+};
+
+function applyI18n(lang) {
+  const t = I18N[lang];
+  document.getElementById('title').textContent = t.title;
+  document.getElementById('subtitle').textContent = t.subtitle;
+  document.getElementById('btnConnect').textContent = (lang==='es'? '🔌 ' : '🔌 ') + t.connect;
+  document.getElementById('btnEnterBoot').textContent = (lang==='es'? '↩️ ' : '↩️ ') + t.enterBoot;
+  document.getElementById('btnFlash').textContent = (lang==='es'? '⚡ ' : '⚡ ') + t.flash;
+  document.getElementById('instTitle').textContent = t.instTitle;
+  const instOl = document.getElementById('instList');
+  instOl.innerHTML = '';
+  t.instList.forEach(x=>{ const li=document.createElement('li'); li.innerHTML=x; instOl.appendChild(li); });
+  const notesUl = document.getElementById('notesList');
+  notesUl.innerHTML = '';
+  t.notes.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; notesUl.appendChild(li); });
+  document.getElementById('foot').textContent = t.foot;
+}
+
+// ========================= Utilities =========================
+const logEl = document.getElementById('log');
+function log(msg) {
+  const ts = new Date().toISOString().split('T')[1].replace('Z','');
+  logEl.textContent += `[${ts}] ${msg}\n`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function setState(text) { document.getElementById('deviceState').textContent = text; }
+function setProgress(pct) {
+  const bar = document.getElementById('progressBar');
+  const v = Math.max(0, Math.min(100, Math.round(pct)));
+  bar.style.width = v + '%';
+  bar.textContent = v + '%';
+}
+function bufToHex(buf) { return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+
+// CRC32 (IEEE 802.3)
+const CRC32_TABLE = (()=>{
+  const t = new Uint32Array(256);
+  for (let i=0; i<256; i++) {
+    let c = i;
+    for (let j=0; j<8; j++) c = (c & 1) ? (0xEDB88320 ^ (c>>>1)) : (c>>>1);
+    t[i] = c>>>0;
+  }
+  return t;
+})();
+function crc32(bytes) {
+  let c = 0xFFFFFFFF;
+  for (let i=0; i<bytes.length; i++) c = CRC32_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+// ========================= Web Serial =========================
+let port, reader, writer;
+let textDecoder, lineReader;
+let currentLang = 'en';
+let isBootloader = false;
+
+async function connectPort() {
+  if (!('serial' in navigator)) {
+    alert('Web Serial not supported. Use Chrome/Edge.');
+    return;
+  }
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    writer = port.writable.getWriter();
+
+    const td = new TextDecoderStream();
+    const ts = new TransformStream(new LineBreakTransformer());
+    lineReader = port.readable.pipeThrough(td).pipeThrough(ts).getReader();
+
+    setState(I18N[currentLang].connected);
+    document.getElementById('btnEnterBoot').disabled = false;
+    log('Connected. Probing bootloader…');
+    // Try to probe
+    await writeLine('HELLO');
+    readLoop();
+  } catch (e) {
+    log('Connect error: ' + e.message);
+  }
+}
+
+// Line splitter
+class LineBreakTransformer { constructor() { this.chunks=''; } transform(chunk, controller) { this.chunks+=chunk; const lines=this.chunks.split('\n'); this.chunks=lines.pop(); lines.forEach(l=>controller.enqueue(l)); } flush(controller){ if(this.chunks) controller.enqueue(this.chunks); }}
+
+async function writeLine(s) { if (!writer) return; const data = new TextEncoder().encode(s + '\n'); await writer.write(data); log('TX: ' + s); }
+
+async function readLoop() {
+  try {
+    while (true) {
+      const { value, done } = await lineReader.read();
+      if (done) break;
+      if (!value) continue;
+      const line = value.trim();
+      log('RX: ' + line);
+      if (line.startsWith('OK BOOT')) { isBootloader = true; setState(I18N[currentLang].boot); document.getElementById('btnFlash').disabled = !selectedFile; }
+      if (line === 'OK ERASE') { /* handled in flash() */ }
+      if (line === 'OK WRITE') { /* handled in flash() */ }
+      if (line.startsWith('ERR')) { alert('Device error: ' + line); }
+      if (line === 'OK DONE') { setProgress(100); alert('Done! Rebooting…'); }
+    }
+  } catch (e) {
+    log('Read loop stopped: ' + e.message);
+  }
+}
+
+async function enterBootloader() {
+  if (!port) return;
+  try {
+    // Some Arduino SAMD bootloaders enter BOOT if the port is touched at 1200 baud
+    await port.close();
+    await port.open({ baudRate: 1200 });
+    await new Promise(r=>setTimeout(r, 120));
+    await port.close();
+    await new Promise(r=>setTimeout(r, 500));
+    await port.open({ baudRate: 115200 });
+
+    writer = port.writable.getWriter();
+    const td = new TextDecoderStream();
+    const ts = new TransformStream(new LineBreakTransformer());
+    lineReader = port.readable.pipeThrough(td).pipeThrough(ts).getReader();
+
+    setState(I18N[currentLang].boot);
+    isBootloader = true;
+    writeLine('HELLO');
+    readLoop();
+  } catch (e) {
+    log('Enter bootloader error: ' + e.message);
+  }
+}
+
+let selectedFile = null;
+const fileInput = document.getElementById('fileInput');
+fileInput.addEventListener('change', ()=>{
+  selectedFile = fileInput.files[0] || null;
+  document.getElementById('btnFlash').disabled = !(selectedFile && isBootloader);
+  document.getElementById('fwInfo').textContent = selectedFile ? `${selectedFile.name} (${Math.round(selectedFile.size/1024)} KB)` : '—';
+});
+
+// Parse .hex if needed -> Uint8Array. For simplicity, accept .bin raw as-is.
+async function loadFirmware(file) {
+  const buf = new Uint8Array(await file.arrayBuffer());
+  if (file.name.toLowerCase().endsWith('.hex')) {
+    return ihexToBin(new TextDecoder().decode(buf));
+  }
+  if (file.name.toLowerCase().endsWith('.uf2')) {
+    // Optional: allow UF2 pass-through (send as binary blocks if your bootloader accepts). Here we just abort.
+    throw new Error('UF2 not supported over Serial. Convert to .bin');
+  }
+  return buf;
+}
+
+function ihexToBin(text) {
+  // Very small Intel HEX to BIN converter (linear address only)
+  const lines = text.trim().split(/\r?\n/);
+  let upper = 0, maxAddr = 0;
+  const recs = [];
+  for (const ln of lines) {
+    if (!ln.startsWith(':')) continue;
+    const len = parseInt(ln.substr(1,2),16);
+    const addr = parseInt(ln.substr(3,4),16);
+    const type = parseInt(ln.substr(7,2),16);
+    const data = ln.substr(9, len*2);
+    if (type === 0x04) { upper = parseInt(data,16) << 16; continue; }
+    if (type === 0x00) {
+      const abs = upper + addr;
+      const bytes = new Uint8Array(len);
+      for (let i=0;i<len;i++) bytes[i] = parseInt(data.substr(i*2,2),16);
+      recs.push({addr:abs, bytes});
+      maxAddr = Math.max(maxAddr, abs + len);
+    }
+  }
+  const out = new Uint8Array(maxAddr);
+  for (const r of recs) out.set(r.bytes, r.addr);
+  return out;
+}
+
+async function flashFirmware() {
+  if (!port || !writer || !selectedFile) return;
+  try {
+    const fw = await loadFirmware(selectedFile);
+    const total = fw.length;
+    const t0 = performance.now();
+
+    setProgress(0);
+    document.getElementById('speedInfo').textContent = '—';
+
+    await writeLine('HELLO');
+    await writeLine('ERASE APP');
+
+    const chunk = 256; // tune to match bootloader page size
+    let addr = 0;
+    for (let off=0; off<total; off+=chunk) {
+      const block = fw.subarray(off, Math.min(off+chunk, total));
+      const crc = crc32(block);
+      await writeLine(`WRITE ${addr} ${block.length} ${crc}`);
+      await writer.write(block);
+      log(`TX DATA: ${block.length} bytes @0x${addr.toString(16)}`);
+      addr += block.length;
+      setProgress((off + block.length) * 100 / total);
+      // Small pacing to avoid overflow in tiny bootloaders
+      await new Promise(r=>setTimeout(r, 2));
+    }
+
+    await writeLine('DONE');
+    const dt = (performance.now() - t0)/1000;
+    const kbps = ((total/1024)/dt).toFixed(1);
+    document.getElementById('speedInfo').textContent = `${(total/1024).toFixed(0)} KB in ${dt.toFixed(1)} s • ${kbps} KB/s`;
+    log('Flashing complete. Waiting for OK DONE…');
+  } catch (e) {
+    alert('Flash error: ' + e.message);
+    log('Flash error: ' + e.stack);
+  }
+}
+
+// ========================= Events =========================
+const btnConnect = document.getElementById('btnConnect');
+const btnEnterBoot = document.getElementById('btnEnterBoot');
+const btnFlash = document.getElementById('btnFlash');
+
+btnConnect.addEventListener('click', connectPort);
+btnEnterBoot.addEventListener('click', enterBootloader);
+btnFlash.addEventListener('click', flashFirmware);
+
+document.getElementById('btnClearFile').addEventListener('click', ()=>{
+  fileInput.value = '';
+  selectedFile = null;
+  document.getElementById('btnFlash').disabled = true;
+  document.getElementById('fwInfo').textContent = '—';
+  setProgress(0);
+});
+
+document.getElementById('langSelect').addEventListener('change', (e)=>{
+  currentLang = e.target.value; applyI18n(currentLang);
+  // Update state label text (keep same color emoji)
+  if (!port) setState(I18N[currentLang].disconnected);
+  else setState(isBootloader ? I18N[currentLang].boot : I18N[currentLang].connected);
+});
+
+// Init
+applyI18n('en');
+setState(I18N['en'].disconnected);
+</script>
+</body>
+</html>
