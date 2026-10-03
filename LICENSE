@@ -1,21 +1,69 @@
-MIT License
+ZeroKeyUSB — Licensing
+======================
 
-Copyright (c) 2025 Depbit-lab
+Copyright (c) 2025-2026 Depbit-lab. All rights reserved except as granted below.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ZeroKeyUSB is source-available: every file in this repository is public so
+anyone can read, audit, build and modify it. Commercial use of the design and
+the code requires a separate commercial license from Depbit-lab.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Required Notice: Copyright (c) 2025-2026 Depbit-lab (https://zerokeyusb.com)
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+
+1. Which license applies to what
+--------------------------------
+
+  Software — firmware, bootloader, tools and web tools
+    (source code, scripts, HTML/JS/CSS and the compiled binaries built from them)
+    -> PolyForm Noncommercial License 1.0.0
+       LICENSES/PolyForm-Noncommercial-1.0.0.md
+       https://polyformproject.org/licenses/noncommercial/1.0.0
+
+  Hardware and documentation — PCB, schematics, BOM, placement files,
+    3D models / STL, pictures and written documentation
+    -> Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+       (CC BY-NC-SA 4.0)
+       LICENSES/CC-BY-NC-SA-4.0.txt
+       https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+  Third-party components (Arduino core, Adafruit libraries, uBitcoin,
+    AES and Base64 code, and the libraries bundled with the web tools)
+    -> keep their own licenses. See THIRD_PARTY_NOTICES.md. Nothing in this
+       file changes or restricts those licenses.
+
+
+2. Additional permission for owners of a ZeroKeyUSB device
+----------------------------------------------------------
+
+In addition to the licenses above, Depbit-lab grants every person and
+organization that owns a genuine ZeroKeyUSB device permission to install and
+run the official ZeroKeyUSB firmware and to use the official web tools with
+that device for any purpose, including commercial and professional purposes
+(for example, using the device to store and type credentials at work).
+
+This permission covers using the device. It does not grant any right to
+manufacture, sell, or commercially distribute the hardware design, the
+firmware, or products derived from them.
+
+
+3. Commercial licensing
+-----------------------
+
+To manufacture, sell, or otherwise use the ZeroKeyUSB design or code for a
+commercial purpose not covered above, contact bruno@zerokeyusb.com.
+
+
+4. Trademarks
+-------------
+
+"ZeroKeyUSB", "ZeroKey" and the ZeroKeyUSB logo are not licensed under any of
+the licenses above. Do not use them to identify a product that is not made or
+authorized by Depbit-lab.
+
+
+5. Earlier versions
+-------------------
+
+Versions of this repository published before this licensing change were
+released under the MIT License, and remain available under the MIT License.
+This change applies to the contents of this repository from this commit on.

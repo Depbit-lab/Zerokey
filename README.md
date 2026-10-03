@@ -98,10 +98,10 @@ You can back up and manage your stored credentials through a web interface provi
 If your device is lost or stolen, your credentials remain safe. ZeroKeyUSB is protected by a PIN and uses AES-128 encryption. Without the correct PIN, stored data is inaccessible and cannot be extracted.
 
 ### Does it support two-factor authentication (2FA)?
-Not at the moment. ZeroKeyUSB is focused on secure, offline credential storage and does not natively support 2FA protocols like TOTP or FIDO. However, since the firmware is fully open source, developers are welcome to extend its functionality—including adding 2FA or other custom features.
+Not at the moment. ZeroKeyUSB is focused on secure, offline credential storage and does not natively support 2FA protocols like TOTP or FIDO. However, since the firmware source is public, developers are welcome to extend its functionality for non-commercial use—including adding 2FA or other custom features.
 
 ### Is the firmware open source?
-Yes. Firmware, schematics, and design files are all released under the MIT License. You can review, modify, or contribute via our GitHub repository.
+The firmware, schematics and design files are all public (source-available). You can review, audit, modify and contribute via this repository for any non-commercial purpose. Commercial use requires a commercial license. See [License](#license).
 
 ### Does it have a battery?
 No. ZeroKeyUSB is powered through USB-C and has no internal battery, meaning there’s nothing to charge or replace.
@@ -119,10 +119,18 @@ Yes—and it’s even recommended. Carry a unit on your keychain while keeping a
 
 ## Contributing
 
-We welcome contributions to enhance ZeroKeyUSB! Since the firmware and design files are fully open source, feel free to review, modify, and submit pull requests. For suggestions, bug reports, or further improvements, please open an issue in this repository.
+We welcome contributions to enhance ZeroKeyUSB! Since the firmware and design files are public, feel free to review, modify, and submit pull requests. By submitting a contribution you agree that Depbit-lab may distribute it under the licenses described in [LICENSE](LICENSE), including under commercial licenses. For suggestions, bug reports, or further improvements, please open an issue in this repository.
 
 ---
 
 ## License
 
-ZeroKeyUSB is released under the [MIT License](LICENSE). See the LICENSE file for additional details.
+ZeroKeyUSB is **source-available**: all firmware, tools, hardware files and documentation are public so anyone can read, audit, build and modify them, but **commercial use requires a commercial license**.
+
+- **Software** (firmware, bootloader, tools, web tools): [PolyForm Noncommercial 1.0.0](LICENSES/PolyForm-Noncommercial-1.0.0.md)
+- **Hardware and documentation** (PCB, BOM, 3D models, pictures, docs): [CC BY-NC-SA 4.0](LICENSES/CC-BY-NC-SA-4.0.txt)
+- **Owners of a ZeroKeyUSB** may run the official firmware and web tools for any purpose, including at work.
+- **Third-party components** keep their own licenses: see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- Versions published before this change remain available under the MIT License.
+
+See [LICENSE](LICENSE) for the full terms. For commercial licensing, contact bruno@zerokeyusb.com.
